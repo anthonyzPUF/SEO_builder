@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Keyword Planning Tool – Standalone</title>
+<style>
+  :root{--bg:#0b0f14;--panel:#121822;--muted:#5b6b83;--text:#e6edf3;--accent:#7cc3ff;--line:#1f2835;--ok:#48d597;--warn:#ffd166}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
+  header{padding:24px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f1520,#0b0f14);position:sticky;top:0;z-index:5}
+  h1{margin:0 0 6px 0;font-size:20px;font-weight:700}
+  .sub{color:var(--muted);font-size:12px}
+  main{padding:20px;display:grid;grid-template-columns:330px 1fr;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 20px rgba(0,0,0,.2)}
+  .card h2{font-size:14px;margin:0 0 12px 0;color:var(--accent);letter-spacing:.2px}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px 2px}
+  input[type=text],textarea,select{width:100%;background:#0d131c;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;outline:none}
+  textarea{min-height:76px;resize:vertical}
+  .row{display:flex;gap:8px}
+  .row>div{flex:1}
+  .btn{appearance:none;background:#152033;color:var(--text);border:1px solid var(--line);padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:600;font-size:13px}
+  .btn:hover{background:#182640}
+  .btn.primary{background:#1a3358;border-color:#204777}
+  .btn.primary:hover{background:#204777}
+  .btn.ghost{background:transparent}
+  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .grid{overflow:auto;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px}
+  th{position:sticky;top:0;background:#0f1622;text-align:left;cursor:pointer}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:var(--muted)}
+  .pill.high{color:#0d2818;background:#2ef39722;border-color:#255a3e}
+  .pill.med{color:#33270f;background:#ffd16622;border-color:#7a5f22}
+  .pill.low{color:#312132;background:#ffc0cb22;border-color:#6b3a4a}
+  .hint{font-size:11px;color:var(--muted)}
+  .footer{margin-top:10px;color:var(--muted);font-size:12px;text-align:center}
+  .spacer{height:8px}
+  .badge{font-size:11px;border:1px solid var(--line);padding:2px 6px;border-radius:8px}
+  .badge.ok{border-color:#1f4d3a;color:#48d597;background:#133526}
+  .badge.warn{border-color:#6b4f12;color:#ffd166;background:#2a2112}
+  .footerbar{padding:12px 16px;text-align:center;border-top:1px solid var(--line);background:#0f1520;position:sticky;bottom:0}
+  .footerbar a{color:#7cc3ff;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Keyword Planning Tool <span class="sub">– Standalone</span></h1>
+  <div class="sub">Generate ranked keywords with match-type recommendations. All client-side. No APIs required.</div>
+</header>
+<main>
+  <section class="card" id="inputs">
+    <h2>Inputs</h2>
+    <label>Title</label><input type="text" id="title" placeholder="e.g., Cash Course: Student Loans 101"/>
+    <label>Description</label><textarea id="description" placeholder="Short description…"></textarea>
+    <div class="row"><div><label>Show</label><input type="text" id="show" placeholder="e.g., Cash Course"/></div><div><label>Host</label><input type="text" id="host" placeholder="(optional) e.g., Sabrina Cardone"/></div></div>
+    <div class="row"><div><label>Brand</label><input type="text" id="brand" value="PragerU Kids"/></div><div><label>Brand Variant</label><input type="text" id="brand_variant" value="PragerU"/></div></div>
+    <label>Topic Override (optional)</label><input type="text" id="topic_override" placeholder="e.g., student loans"/>
+    <div class="row"><div><label>Include educational intent?</label><select id="inc_edu"><option value="true" selected>Yes</option><option value="false">No</option></select></div><div><label>Include commercial intent?</label><select id="inc_comm"><option value="false" selected>No</option><option value="true">Yes</option></select></div></div>
+    <div class="spacer"></div>
+    <div class="toolbar">
+      <button class="btn primary" id="generate">Generate</button>
+      <button class="btn ghost" id="reset">Reset</button>
+      <span class="hint">Use a descriptive title for higher relevance.</span>
+    </div>
+  </section>
+  <section class="card">
+    <h2>Output</h2>
+    <div class="toolbar" style="margin-bottom:10px">
+      <button class="btn" id="copyKeywords">Copy Keywords (by match)</button>
+      <button class="btn" id="copyBase">Copy Base Terms only</button>
+      <button class="btn" id="copyNegs">Copy Starter Negatives</button>
+      <select id="priorityFilter" class="btn"><option value="">All priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
+      <select id="themeFilter" class="btn"><option value="">All themes</option><option value="Brand / Show">Brand / Show</option><option value="Intent + Topic">Intent + Topic</option><option value="Pure Topic">Pure Topic</option></select>
+      <span class="hint">Click headers to sort. Filters affect copy.</span>
+    </div>
+    <div class="grid">
+      <table id="tbl">
+        <thead><tr>
+          <th data-k="theme">Ad Group Theme</th>
+          <th data-k="priority">Priority</th>
+          <th data-k="score">Relevance</th>
+          <th data-k="mtype">Match</th>
+          <th data-k="keyword">Keyword</th>
+          <th data-k="base">Base Term</th>
+          <th data-k="kd">Heuristic KD</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="footer" id="footerNote">No results yet. Fill inputs and click Generate.</div>
+  </section>
+</main>
+<div class="footerbar"><a href="https://www.prageru.com" target="_blank" rel="noopener noreferrer">Created by the PragerU Paid Media Team</a></div>
+<script>
+const STOPWORDS=new Set("a an and are as at be by for from has have how i in into is it its just learn more new of on or our out quick step steps the their them they this to up video videos watch what when where which who why with your".split(" "));
+const INTENT_CORE=["watch","video","videos","free","online","explained","definition","guide","how to","course","class","lesson","for kids","for parents","101","basics","beginner","intro","tips","examples","pros and cons"];
+const COMMERCIAL_INTENT=["best","top","compare","comparison","reviews","near me","cost","price","affordable","cheap","premium"];
+const EDU_INTENT=["curriculum","worksheet","worksheets","printable","pdf","lesson plan","quiz","activities","activity","questions"];
+const DEFAULT_NEGATIVES=["torrent","lyrics","mp3","tiktok","reddit","discord","minecraft","fortnite","roblox","game","free download","pirated","streaming site","porn","nsfw","nsfw content","hack","cheat code"];
+function norm(s){return (s||"").normalize("NFKC").replace(/[–—]/g,"-").trim()}
+function toks(s){s=norm(s.toLowerCase());const m=s.match(/[a-z0-9']+/g)||[];return m.filter(t=>!STOPWORDS.has(t)&&!/^[0-9]+$/.test(t))}
+function ngrams(a,n){const o=[];for(let i=0;i<=a.length-n;i++)o.push(a.slice(i,i+n).join(" "));return o}
+function unique(a){const s=new Set();const o=[];for(const x of a){if(!s.has(x)){s.add(x);o.push(x)}}return o}
+function extractTopics(inp){const tt=toks(inp.title),dt=toks(inp.description),st=toks(inp.show),ht=toks(inp.host);const counts={};[...tt,...dt].forEach(w=>counts[w]=(counts[w]||0)+1);const common=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,30).map(x=>x[0]);const boosted=unique([...st,...ht,...common]);let topicPhrases=[];if(inp.topic_override)topicPhrases.push(norm(inp.topic_override.toLowerCase()));topicPhrases=unique([...boosted.filter(w=>w.length>2),...ngrams(tt,2),...ngrams(tt,3),...topicPhrases]).filter(p=>{const pcs=p.split(" ");const hay=new Set([...tt,...dt,...st]);return pcs.some(t=>hay.has(t))||(inp.topic_override&&p.includes(inp.topic_override))}).slice(0,40);return{core_terms:unique([...tt,...st]),host_terms:ht,topic_phrases:topicPhrases}}
+function buildKeywordPhrases(inp,parts){const brand=unique([inp.brand,inp.brand_variant,inp.show,inp.host].map(x=>norm(String(x||"").toLowerCase())).filter(Boolean));let intents=[...INTENT_CORE];if(inp.include_commercial_intent)intents=intents.concat(COMMERCIAL_INTENT);if(inp.include_edu_intent)intents=intents.concat(EDU_INTENT);const cand=[];const topics=parts.topic_phrases.length?parts.topic_phrases:parts.core_terms;function combos(l,r){const o=[];for(const a of l){for(const b of r){o.push(`${a} ${b}`,`${b} ${a}`)}}return o}cand.push(...unique(topics));cand.push(...unique(combos(topics,intents)));if(brand.length){cand.push(...unique(combos(topics,brand)));cand.push(...unique(combos(brand,intents)))}const clean=unique(cand.map(c=>c.replace(/\s+/g," ").trim()).filter(c=>c.length>=2&&c.length<=60));return{brand_terms:brand,intents,keywords:clean}}
+function relevanceScore(kw,inp){const k=kw.toLowerCase();const tt=new Set(toks(inp.title)),dt=new Set(toks(inp.description)),st=new Set(toks(inp.show)),ht=new Set(toks(inp.host));let s=0;for(const t of tt)if(k.includes(t))s+=12;for(const t of dt)if(k.includes(t))s+=4;for(const t of st)if(k.includes(t))s+=8;for(const t of ht)if(k.includes(t))s+=6;for(const i of INTENT_CORE)if(k.includes(i))s+=5;if(inp.include_edu_intent)for(const ei of EDU_INTENT)if(k.includes(ei))s+=3;if(inp.include_commercial_intent)for(const ci of COMMERCIAL_INTENT)if(k.includes(ci))s+=2;for(const b of [String(inp.brand||"").toLowerCase(),String(inp.brand_variant||"").toLowerCase()])if(b&&k.includes(b))s+=10;const n=k.split(/\s+/).length;if(2<=n&&n<=4)s+=5;else if(n===1)s-=2;else if(n>=7)s-=3;const tarr=Array.from(tt);for(const tg of ngrams(tarr,2).concat(ngrams(tarr,3)))if(k.includes(tg))s+=4;return Math.max(0,s)}
+function heuristicKD(base){const w=base.split(/\s+/).length;let kd=20+w*8;const generic=["best","top","guide","lesson","class","definition","explained","video","videos","free","online"];for(const g of generic)if(base.includes(g))kd+=6;const rare=base.replace(/[^a-z]/g,"").length>18;if(rare)kd-=10;if(base.length>=30)kd+=10;if(base.includes("prageru")||base.includes("cash course"))kd-=8;return Math.max(5,Math.min(95,Math.round(kd)))}
+function matchTypes(kw){return[["Broad",kw],["Phrase",`"${kw}"`],["Exact",`[${kw}]`]]}
+function themeForKeyword(k,parts){k=k.toLowerCase();if(parts.brand_terms.some(b=>k.includes(b)))return"Brand / Show";if(INTENT_CORE.some(i=>k.includes(i)))return"Intent + Topic";return"Pure Topic"}
+function priorityFromScore(s){return s>=28?"High":(s>=18?"Medium":"Low")}
+function recommendMatchType(s,theme){if(s>=35)return"Exact";if(s>=25)return"Phrase";return theme==="Brand / Show"?"Exact":"Broad"}
+let rows=[],negatives=[],currentSort={key:"score",dir:"desc"};
+function render(){const pf=document.getElementById("priorityFilter").value;const tf=document.getElementById("themeFilter").value;const tbody=document.querySelector("#tbl tbody");tbody.innerHTML="";let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);view.sort((a,b)=>{const d=currentSort.dir==="asc"?1:-1;const k=currentSort.key;if(k==="score")return(a.score-b.score)*d;return String(a[k]).localeCompare(String(b[k]))*d});for(const r of view){const tr=document.createElement("tr");tr.innerHTML=`<td>${r.theme}</td><td><span class="pill ${r.priority==='High'?'high':(r.priority==='Medium'?'med':'low')}">${r.priority}</span></td><td>${r.score.toFixed(1)}</td><td>${r.mtype} <span class="hint">(${r.rec})</span></td><td>${r.keyword}</td><td>${r.base}</td><td>${r.kdBadge}</td>`;tbody.appendChild(tr)}document.getElementById("footerNote").textContent=view.length?`${view.length} rows (filtered)`:"No results yet. Fill inputs and click Generate."}
+function kdBadge(kd){let cls="ok";if(kd>=60)cls="warn";return`<span class="badge ${cls}">${kd}</span>`}
+function copyToClipboard(t){navigator.clipboard.writeText(t).then(()=>{const f=document.getElementById("footerNote");f.textContent="Copied to clipboard!";setTimeout(()=>f.textContent="",1500)}).catch(()=>alert("Copy failed"))}
+function generate(){const inp={title:val("title"),description:val("description"),show:val("show"),host:val("host"),brand:val("brand"),brand_variant:val("brand_variant"),topic_override:val("topic_override"),include_edu_intent:val("inc_edu")==="true",include_commercial_intent:val("inc_comm")==="true"};const parts=extractTopics(inp),built=buildKeywordPhrases(inp,parts);const temp=[];for(const base of built.keywords){const score=relevanceScore(base,inp),priority=priorityFromScore(score),theme=themeForKeyword(base,built),rec=recommendMatchType(score,theme),kd=heuristicKD(base.toLowerCase());for(const [mtype,rendered] of matchTypes(base)){temp.push({theme,priority,score,mtype,keyword:rendered,base,rec,kd,kdBadge:kdBadge(kd)})}}temp.sort((a,b)=>b.score-a.score);rows=temp.slice(0,300);negatives=[...DEFAULT_NEGATIVES];if(!inp.include_edu_intent)negatives=unique(negatives.concat(["worksheet","worksheets","pdf"]));render()}
+function val(id){return document.getElementById(id).value}
+function setval(id,v){document.getElementById(id).value=v}
+document.getElementById("copyKeywords").onclick=()=>{const pf=val("priorityFilter"),tf=val("themeFilter");let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);copyToClipboard(view.map(r=>r.keyword).join("\n"))}
+document.getElementById("copyBase").onclick=()=>{const pf=val("priorityFilter"),tf=val("themeFilter");let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);const seen=new Set(),out=[];for(const r of view){if(!seen.has(r.base)){seen.add(r.base);out.push(r.base)}}copyToClipboard(out.join("\n"))}
+document.getElementById("copyNegs").onclick=()=>copyToClipboard(negatives.join("\n"))
+document.querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{const key=th.getAttribute("data-k");if(currentSort.key===key){currentSort.dir=currentSort.dir==="asc"?"desc":"asc"}else{currentSort.key=key;currentSort.dir=(key==="score")?"desc":"asc"}render()}))
+document.getElementById("reset").onclick=()=>{["title","description","show","host","brand","brand_variant","topic_override"].forEach(id=>setval(id,""));setval("inc_edu","true");setval("inc_comm","false");rows=[];negatives=[];render()}
+document.getElementById("generate").onclick=generate
+setval("title","Cash Course: Student Loans 101");setval("description","A friendly intro to student loans for teens and parents: how they work, interest, repayment, and pitfalls to avoid.");setval("show","Cash Course");setval("brand","PragerU Kids");setval("brand_variant","PragerU");setval("topic_override","student loans")
+</script>
+</body>
+</html>
