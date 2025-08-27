@@ -1,53 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Keyword Planning Tool – Standalone</title>
+<title>Keyword Planning Tool – Standalone + Free APIs</title>
 <style>
-  :root{--bg:#0b0f14;--panel:#121822;--muted:#5b6b83;--text:#e6edf3;--accent:#7cc3ff;--line:#1f2835;--ok:#48d597;--warn:#ffd166}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
-  header{padding:24px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f1520,#0b0f14);position:sticky;top:0;z-index:5}
-  h1{margin:0 0 6px 0;font-size:20px;font-weight:700}
-  .sub{color:var(--muted);font-size:12px}
-  main{padding:20px;display:grid;grid-template-columns:330px 1fr;gap:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 20px rgba(0,0,0,.2)}
-  .card h2{font-size:14px;margin:0 0 12px 0;color:var(--accent);letter-spacing:.2px}
-  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px 2px}
-  input[type=text],textarea,select{width:100%;background:#0d131c;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;outline:none}
-  textarea{min-height:76px;resize:vertical}
-  .row{display:flex;gap:8px}
-  .row>div{flex:1}
-  .btn{appearance:none;background:#152033;color:var(--text);border:1px solid var(--line);padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:600;font-size:13px}
-  .btn:hover{background:#182640}
-  .btn.primary{background:#1a3358;border-color:#204777}
-  .btn.primary:hover{background:#204777}
-  .btn.ghost{background:transparent}
-  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .grid{overflow:auto;border:1px solid var(--line);border-radius:12px}
-  table{width:100%;border-collapse:collapse}
-  th,td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px}
-  th{position:sticky;top:0;background:#0f1622;text-align:left;cursor:pointer}
-  tr:hover td{background:rgba(255,255,255,.02)}
-  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:var(--muted)}
-  .pill.high{color:#0d2818;background:#2ef39722;border-color:#255a3e}
-  .pill.med{color:#33270f;background:#ffd16622;border-color:#7a5f22}
-  .pill.low{color:#312132;background:#ffc0cb22;border-color:#6b3a4a}
-  .hint{font-size:11px;color:var(--muted)}
-  .footer{margin-top:10px;color:var(--muted);font-size:12px;text-align:center}
-  .spacer{height:8px}
-  .badge{font-size:11px;border:1px solid var(--line);padding:2px 6px;border-radius:8px}
-  .badge.ok{border-color:#1f4d3a;color:#48d597;background:#133526}
-  .badge.warn{border-color:#6b4f12;color:#ffd166;background:#2a2112}
-  .footerbar{padding:12px 16px;text-align:center;border-top:1px solid var(--line);background:#0f1520;position:sticky;bottom:0}
-  .footerbar a{color:#7cc3ff;text-decoration:none}
+:root{--bg:#0b0f14;--panel:#121822;--muted:#5b6b83;--text:#e6edf3;--accent:#7cc3ff;--line:#1f2835}
+*{box-sizing:border-box}body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
+header{padding:24px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f1520,#0b0f14);position:sticky;top:0;z-index:5}
+h1{margin:0 0 6px 0;font-size:20px;font-weight:700}.sub{color:var(--muted);font-size:12px}
+main{padding:20px;display:grid;grid-template-columns:330px 1fr;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 20px rgba(0,0,0,.2)}
+.card h2{font-size:14px;margin:0 0 12px 0;color:var(--accent);letter-spacing:.2px}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px 2px}
+input[type=text],textarea,select{width:100%;background:#0d131c;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;outline:none}
+textarea{min-height:76px;resize:vertical}.row{display:flex;gap:8px}.row>div{flex:1}
+.btn{appearance:none;background:#152033;color:var(--text);border:1px solid var(--line);padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:600;font-size:13px}
+.btn:hover{background:#182640}.btn.primary{background:#1a3358;border-color:#204777}.btn.primary:hover{background:#204777}.btn.ghost{background:transparent}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px}th{position:sticky;top:0;background:#0f1622;text-align:left;cursor:pointer}
+tr:hover td{background:rgba(255,255,255,.02)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:#c9d4e2}
+.pill.high{color:#0d2818;background:#2ef39722;border-color:#255a3e}.pill.med{color:#33270f;background:#ffd16622;border-color:#7a5f22}.pill.low{color:#312132;background:#ffc0cb22;border-color:#6b3a4a}
+.hint{font-size:11px;color:var(--muted)}.footer{margin-top:10px;color:var(--muted);font-size:12px;text-align:center}.spacer{height:8px}
+.badge{font-size:11px;border:1px solid var(--line);padding:2px 6px;border-radius:8px}
+.badge.ok{border-color:#1f4d3a;color:#48d597;background:#133526}.badge.warn{border-color:#6b4f12;color:#ffd166;background:#2a2112}
+.footerbar{padding:12px 16px;text-align:center;border-top:1px solid var(--line);background:#0f1520;position:sticky;bottom:0}
+.footerbar a{color:#7cc3ff;text-decoration:none}
 </style>
 </head>
 <body>
 <header>
-  <h1>Keyword Planning Tool <span class="sub">– Standalone</span></h1>
-  <div class="sub">Generate ranked keywords with match-type recommendations. All client-side. No APIs required.</div>
+  <h1>Keyword Planning Tool <span class="sub">– Standalone + Free APIs</span></h1>
+  <div class="sub">Client-side generation with optional Datamuse expansion and Wikipedia pageviews. No keys required.</div>
 </header>
 <main>
   <section class="card" id="inputs">
@@ -61,6 +47,8 @@
     <div class="spacer"></div>
     <div class="toolbar">
       <button class="btn primary" id="generate">Generate</button>
+      <button class="btn" id="expandDatamuse">Expand via Datamuse</button>
+      <button class="btn" id="addWiki">Add Wikipedia Pageviews</button>
       <button class="btn ghost" id="reset">Reset</button>
       <span class="hint">Use a descriptive title for higher relevance.</span>
     </div>
@@ -84,7 +72,9 @@
           <th data-k="mtype">Match</th>
           <th data-k="keyword">Keyword</th>
           <th data-k="base">Base Term</th>
+          <th data-k="origin">Origin</th>
           <th data-k="kd">Heuristic KD</th>
+          <th data-k="wiki">Wiki PV (avg)</th>
         </tr></thead>
         <tbody></tbody>
       </table>
@@ -111,19 +101,27 @@ function matchTypes(kw){return[["Broad",kw],["Phrase",`"${kw}"`],["Exact",`[${kw
 function themeForKeyword(k,parts){k=k.toLowerCase();if(parts.brand_terms.some(b=>k.includes(b)))return"Brand / Show";if(INTENT_CORE.some(i=>k.includes(i)))return"Intent + Topic";return"Pure Topic"}
 function priorityFromScore(s){return s>=28?"High":(s>=18?"Medium":"Low")}
 function recommendMatchType(s,theme){if(s>=35)return"Exact";if(s>=25)return"Phrase";return theme==="Brand / Show"?"Exact":"Broad"}
-let rows=[],negatives=[],currentSort={key:"score",dir:"desc"};
-function render(){const pf=document.getElementById("priorityFilter").value;const tf=document.getElementById("themeFilter").value;const tbody=document.querySelector("#tbl tbody");tbody.innerHTML="";let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);view.sort((a,b)=>{const d=currentSort.dir==="asc"?1:-1;const k=currentSort.key;if(k==="score")return(a.score-b.score)*d;return String(a[k]).localeCompare(String(b[k]))*d});for(const r of view){const tr=document.createElement("tr");tr.innerHTML=`<td>${r.theme}</td><td><span class="pill ${r.priority==='High'?'high':(r.priority==='Medium'?'med':'low')}">${r.priority}</span></td><td>${r.score.toFixed(1)}</td><td>${r.mtype} <span class="hint">(${r.rec})</span></td><td>${r.keyword}</td><td>${r.base}</td><td>${r.kdBadge}</td>`;tbody.appendChild(tr)}document.getElementById("footerNote").textContent=view.length?`${view.length} rows (filtered)`:"No results yet. Fill inputs and click Generate."}
+let rows=[],negatives=[],currentSort={key:"score",dir:"desc"};let wikiAvgByTerm={};
+function render(){const pf=document.getElementById("priorityFilter").value;const tf=document.getElementById("themeFilter").value;const tbody=document.querySelector("#tbl tbody");tbody.innerHTML="";let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);view.sort((a,b)=>{const d=currentSort.dir==="asc"?1:-1;const k=currentSort.key;if(k==="score")return(a.score-b.score)*d;return String(a[k]).localeCompare(String(b[k]))*d});for(const r of view){const tr=document.createElement("tr");tr.innerHTML=`<td>${r.theme}</td><td><span class="pill ${r.priority==='High'?'high':(r.priority==='Medium'?'med':'low')}">${r.priority}</span></td><td>${r.score.toFixed(1)}</td><td>${r.mtype} <span class="hint">(${r.rec})</span></td><td>${r.keyword}</td><td>${r.base}</td><td>${r.origin||'Core'}</td><td>${r.kdBadge}</td><td>${wikiAvgByTerm[r.base]!==undefined?Number(wikiAvgByTerm[r.base]).toFixed(0):'–'}</td>`;tbody.appendChild(tr)}document.getElementById("footerNote").textContent=view.length?`${view.length} rows (filtered)`:"No results yet. Fill inputs and click Generate."}
 function kdBadge(kd){let cls="ok";if(kd>=60)cls="warn";return`<span class="badge ${cls}">${kd}</span>`}
 function copyToClipboard(t){navigator.clipboard.writeText(t).then(()=>{const f=document.getElementById("footerNote");f.textContent="Copied to clipboard!";setTimeout(()=>f.textContent="",1500)}).catch(()=>alert("Copy failed"))}
-function generate(){const inp={title:val("title"),description:val("description"),show:val("show"),host:val("host"),brand:val("brand"),brand_variant:val("brand_variant"),topic_override:val("topic_override"),include_edu_intent:val("inc_edu")==="true",include_commercial_intent:val("inc_comm")==="true"};const parts=extractTopics(inp),built=buildKeywordPhrases(inp,parts);const temp=[];for(const base of built.keywords){const score=relevanceScore(base,inp),priority=priorityFromScore(score),theme=themeForKeyword(base,built),rec=recommendMatchType(score,theme),kd=heuristicKD(base.toLowerCase());for(const [mtype,rendered] of matchTypes(base)){temp.push({theme,priority,score,mtype,keyword:rendered,base,rec,kd,kdBadge:kdBadge(kd)})}}temp.sort((a,b)=>b.score-a.score);rows=temp.slice(0,300);negatives=[...DEFAULT_NEGATIVES];if(!inp.include_edu_intent)negatives=unique(negatives.concat(["worksheet","worksheets","pdf"]));render()}
+function generate(){const inp={title:val("title"),description:val("description"),show:val("show"),host:val("host"),brand:val("brand"),brand_variant:val("brand_variant"),topic_override:val("topic_override"),include_edu_intent:val("inc_edu")==="true",include_commercial_intent:val("inc_comm")==="true"};const parts=extractTopics(inp),built=buildKeywordPhrases(inp,parts);const temp=[];for(const base of built.keywords){const score=relevanceScore(base,inp),priority=priorityFromScore(score),theme=themeForKeyword(base,built),rec=recommendMatchType(score,theme),kd=heuristicKD(base.toLowerCase());for(const [mtype,rendered] of matchTypes(base)){temp.push({theme,priority,score,mtype,keyword:rendered,base,rec,kd,kdBadge:kdBadge(kd),origin:'Core'})}}temp.sort((a,b)=>b.score-a.score);rows=temp.slice(0,300);negatives=[...DEFAULT_NEGATIVES];if(!inp.include_edu_intent)negatives=unique(negatives.concat(["worksheet","worksheets","pdf"]));render()}
+function addRowsFromBases(bases,origin){const inp={title:val("title"),description:val("description"),show:val("show"),host:val("host"),brand:val("brand"),brand_variant:val("brand_variant"),topic_override:val("topic_override"),include_edu_intent:val("inc_edu")==="true",include_commercial_intent:val("inc_comm")==="true"};const built={brand_terms:[]};const added=[];for(const base of bases){if(!rows.some(r=>r.base===base)){const s=relevanceScore(base,inp),p=priorityFromScore(s),t=themeForKeyword(base,built),rec=recommendMatchType(s,t),kd=heuristicKD(base.toLowerCase());for(const [mtype,rendered] of matchTypes(base)){rows.push({theme:t,priority:p,score:s,mtype,keyword:rendered,base,rec,kd,kdBadge:kdBadge(kd),origin})}added.push(base)}}rows.sort((a,b)=>b.score-a.score);rows=rows.slice(0,600);render();return added}
+async function expandDatamuse(){const bases=Array.from(new Set(rows.map(r=>r.base))).slice(0,40);const q=bases[0]||val('topic_override')||val('title');if(!q){return}const url=`https://api.datamuse.com/words?ml=${encodeURIComponent(q)}&max=40`;const r=await fetch(url);if(!r.ok){return}const j=await r.json();const terms=j.map(x=>x.word).filter(w=>w&&w.length<40);addRowsFromBases(terms,'Datamuse')}
+function yyyymmdd(d){const y=d.getUTCFullYear();const m=('0'+(d.getUTCMonth()+1)).slice(-2);const dd=('0'+d.getUTCDate()).slice(-2);return `${y}${m}${dd}`}
+async function wikiTitleFor(term){const u=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(term)}&srlimit=1&format=json&origin=*`;const r=await fetch(u);if(!r.ok)return null;const j=await r.json();return j?.query?.search?.[0]?.title||null}
+async function wikiAvg(term){try{const title=await wikiTitleFor(term);if(!title)return null;const end=new Date();const start=new Date(Date.now()-60*24*60*60*1000);const u=`https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/${encodeURIComponent(title)}/daily/${yyyymmdd(start)}/${yyyymmdd(end)}`;const r=await fetch(u);if(!r.ok)return null;const j=await r.json();const arr=(j?.items||[]).map(x=>x.views);if(!arr.length)return 0;const avg=arr.reduce((a,b)=>a+b,0)/arr.length;return avg}catch(e){return null}}
+async function addWiki(){const bases=Array.from(new Set(rows.map(r=>r.base))).slice(0,50);for(const b of bases){if(wikiAvgByTerm[b]===undefined){wikiAvgByTerm[b]=await wikiAvg(b);render()}}}
 function val(id){return document.getElementById(id).value}
 function setval(id,v){document.getElementById(id).value=v}
 document.getElementById("copyKeywords").onclick=()=>{const pf=val("priorityFilter"),tf=val("themeFilter");let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);copyToClipboard(view.map(r=>r.keyword).join("\n"))}
 document.getElementById("copyBase").onclick=()=>{const pf=val("priorityFilter"),tf=val("themeFilter");let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);const seen=new Set(),out=[];for(const r of view){if(!seen.has(r.base)){seen.add(r.base);out.push(r.base)}}copyToClipboard(out.join("\n"))}
 document.getElementById("copyNegs").onclick=()=>copyToClipboard(negatives.join("\n"))
 document.querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{const key=th.getAttribute("data-k");if(currentSort.key===key){currentSort.dir=currentSort.dir==="asc"?"desc":"asc"}else{currentSort.key=key;currentSort.dir=(key==="score")?"desc":"asc"}render()}))
-document.getElementById("reset").onclick=()=>{["title","description","show","host","brand","brand_variant","topic_override"].forEach(id=>setval(id,""));setval("inc_edu","true");setval("inc_comm","false");rows=[];negatives=[];render()}
+document.getElementById("reset").onclick=()=>{["title","description","show","host","brand","brand_variant","topic_override"].forEach(id=>setval(id,""));setval("inc_edu","true");setval("inc_comm","false");rows=[];negatives=[];wikiAvgByTerm={};render()}
 document.getElementById("generate").onclick=generate
+document.getElementById("expandDatamuse").onclick=expandDatamuse
+document.getElementById("addWiki").onclick=addWiki
 setval("title","Cash Course: Student Loans 101");setval("description","A friendly intro to student loans for teens and parents: how they work, interest, repayment, and pitfalls to avoid.");setval("show","Cash Course");setval("brand","PragerU Kids");setval("brand_variant","PragerU");setval("topic_override","student loans")
 </script>
 </body>
