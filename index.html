@@ -110,4 +110,16 @@ document.getElementById('copyEditor').onclick=()=>{const {H,D}=collectAssets();c
 function openAdCopyForCluster(k){const bases=new Set(clusters[k]||[]);buildAdCopy(bases);document.getElementById('adSidebar').classList.add('open')}
 /* Defaults */
 document.getElementById("title").value="Cash Course: Student Loans 101";document.getElementById("description").value="A friendly intro to student loans for teens and parents: how they work, interest, repayment, and pitfalls to avoid.";document.getElementById("show").value="Cash Course";document.getElementById("brand").value="PragerU Kids";document.getElementById("brand_variant").value="PragerU";document.getElementById("topic_override").value="student loans";
-</script></body></html>
+</script><div id="hb" style="position:fixed;left:10px;bottom:10px;background:#152033;border:1px solid #1f2835;color:#e6edf3;padding:6px 10px;border-radius:10px;font:12px ui-sans-serif;z-index:9999">JS: loading…</div>
+<script>
+(function(){
+  const el = document.getElementById('hb');
+  function ok(t){ el.textContent=t; el.style.background='#133526'; el.style.borderColor='#1f4d3a'; }
+  function err(t){ el.textContent=t; el.style.background='#2a1218'; el.style.borderColor='#6b2130'; }
+  ok('JS: loaded ✓');
+  const g=document.getElementById('generate'); if(g){ g.addEventListener('click',()=>ok('Generate clicked ✓')); }
+  window.onerror=function(msg,src,lin,col){ err('Error: '+String(msg).slice(0,80)); };
+  window.addEventListener('unhandledrejection',e=>{ err('Promise error'); });
+})();
+</script>
+</body></html>
