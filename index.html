@@ -3,200 +3,1042 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SEO_builder Pro</title>
+  <title>PragerU SEO Builder Pro</title>
+
+  <!-- TF.js + Universal Sentence Encoder for semantic deduplication (graceful fallback if blocked) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.18.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.min.js"></script>
+
   <style>
-    /* --- Same styles as before --- */
-    body{margin:0;font-family:ui-sans-serif;background:#0b0f14;color:#e6edf3}
-    header{padding:20px;background:#0f1520;border-bottom:1px solid #1f2835}
-    h1{margin:0;font-size:22px;font-weight:800;color:#F15A22}
-    main{padding:20px;display:grid;grid-template-columns:330px 1fr;gap:16px}
-    .card{background:#121822;border:1px solid #1f2835;border-radius:14px;padding:14px}
-    .btn{background:#1a2436;border:1px solid #1f2835;border-radius:10px;padding:10px;color:#e6edf3;cursor:pointer}
-    .btn.primary{background:#F15A22;border-color:#a63a13}
-    .btn.primary:hover{background:#d94e1e}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{padding:8px;border-bottom:1px solid #1f2835;font-size:13px}
-    th{color:#F15A22;text-align:left}
-    .pill{padding:2px 6px;border-radius:6px;font-size:11px}
-    .pill.high{background:#2ef39722;color:#48d597}
-    .pill.med{background:#ffd16622;color:#ffd166}
-    .pill.low{background:#ff9fb022;color:#ff7b92}
-    .sidebar{position:fixed;top:0;right:-40vw;width:40vw;height:100vh;background:#0f1520;border-left:1px solid #1f2835;transition:right .3s}
+    :root{
+      --bg:#0b0f14;--panel:#121822;--muted:#8aa0bf;--text:#e6edf3;--accent:#F15A22;--line:#1f2835;
+      --ok:#48d597;--warn:#ffd166;--err:#ff7b92
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
+    header{padding:18px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f1520,#0b0f14)}
+    h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.2px}
+    h1 .brand{color:var(--accent)}
+    .sub{color:var(--muted);font-size:12px;margin-top:4px}
+    main{padding:20px;display:grid;grid-template-columns:360px 1fr;gap:16px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 20px rgba(0,0,0,.2)}
+    .card h2{font-size:14px;margin:0 0 12px 0;color:var(--accent);letter-spacing:.2px}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px 2px}
+    input[type=text],textarea,select{width:100%;background:#0d131c;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;outline:none}
+    textarea{min-height:76px;resize:vertical}
+    .row{display:flex;gap:8px}.row>div{flex:1}
+    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+    .btn{appearance:none;background:#1a2436;color:var(--text);border:1px solid var(--line);padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;font-size:13px;letter-spacing:.2px;transition:transform .06s ease,opacity .2s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:var(--accent);border-color:#a63a13}.btn.primary:hover{background:#d94e1e}
+    .btn:disabled{opacity:.55;cursor:not-allowed}.btn.ghost{background:transparent}
+    .grid{overflow:auto;border:1px solid var(--line);border-radius:12px;margin-top:8px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+    th{position:sticky;top:0;background:#0f1622;text-align:left;cursor:pointer}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:#e9eef6}
+    .pill.high{color:#102d1f;background:#2ef39722;border-color:#255a3e}
+    .pill.med{color:#322815;background:#ffd16622;border-color:#7a5f22}
+    .pill.low{color:#311a1d;background:#ff9fb022;border-color:#6b3a4a}
+    .badge{font-size:11px;border:1px solid var(--line);padding:2px 6px;border-radius:8px;color:#c9d4e2;margin-right:6px}
+    .badge.ok{border-color:#1f4d3a;color:#7af0b7;background:#133526}
+    .badge.warn{border-color:#7a5f22;color:#ffd166;background:#322815}
+    .badge.err{border-color:#6b2130;color:#ff7b92;background:#2a1218}
+    .hint{font-size:11px;color:var(--muted)}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}
+    .chip{border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-size:12px;cursor:pointer;background:#0f1622}
+    .chip.active{background:var(--accent);border-color:#a63a13;color:#fff}
+    .viewtabs{display:flex;gap:6px;margin:8px 0}
+    .viewtab{padding:6px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#0f1622}
+    .viewtab.active{background:var(--accent);border-color:#a63a13;color:#fff}
+    .cluster{background:#0f1622;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+    .cluster h4{margin:0 0 6px 0;font-size:13px;color:#cdd7e5}
+    .cluster small{color:#8aa0bf}
+    .footerbar{padding:12px 16px;text-align:center;border-top:1px solid var(--line);background:#0f1520;position:sticky;bottom:0}
+    .footerbar a{color:var(--accent);text-decoration:none}
+    .legend{font-size:12px;color:#cdd7e5;background:#0f1622;border:1px solid var(--line);border-radius:10px;padding:8px}
+    .controls{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .tooltip{border-bottom:1px dotted #99a7bf;cursor:help}
+    .sidebar{position:fixed;top:0;right:-42vw;width:42vw;max-width:680px;height:100vh;background:#0f1520;border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.35);transition:right .28s ease;z-index:50;display:flex;flex-direction:column}
     .sidebar.open{right:0}
+    .sidebar header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);background:#0f1520}
+    .sidebar h3{margin:0;font-size:16px;color:var(--accent)}
+    .closex{background:transparent;border:0;color:#cdd7e5;font-size:18px;cursor:pointer}
+    .pane{padding:12px}
   </style>
 </head>
 <body>
-  <header>
-    <h1>PragerU SEO Builder Pro</h1>
-    <div>Multi-feed keyword engine + Ad Copy Generator</div>
-  </header>
-  <main>
-    <section class="card">
-      <h2>Inputs</h2>
-      <label>Title</label><input id="title" type="text" placeholder="Cash Course: Student Loans 101"/>
-      <label>Description</label><textarea id="description"></textarea>
-      <label>Show</label><input id="show" type="text" placeholder="Cash Course"/>
-      <label>Brand</label><input id="brand" type="text" value="PragerU Kids"/>
-      <label>Topic Override</label><input id="topic_override" type="text"/>
-      <div style="margin-top:10px">
-        <button class="btn primary" id="generate">Generate</button>
-        <button class="btn" id="openCopy" disabled>Generate Ad Copy</button>
-        <button class="btn" id="reset">Reset</button>
+<header>
+  <h1><span class="brand">PragerU</span> SEO Builder Pro</h1>
+  <div class="sub">Semantic, multi-feed keyword engine with clustering + RSA ad copy generator.</div>
+</header>
+
+<main>
+  <!-- Inputs -->
+  <section class="card" id="inputs">
+    <h2>Inputs</h2>
+
+    <label>Title</label>
+    <input type="text" id="title" placeholder="Cash Course: Student Loans 101"/>
+
+    <label>Description</label>
+    <textarea id="description" placeholder="Short description…"></textarea>
+
+    <div class="row">
+      <div>
+        <label>Show</label>
+        <input type="text" id="show" placeholder="Cash Course"/>
       </div>
-    </section>
-    <section class="card">
-      <h2>Keyword Output</h2>
-      <div id="outputArea">No results yet.</div>
-    </section>
-  </main>
+      <div>
+        <label>Brand</label>
+        <input type="text" id="brand" value="PragerU Kids"/>
+      </div>
+    </div>
 
-  <!-- Ad Copy Sidebar -->
-  <div class="sidebar" id="adSidebar">
-    <h2 style="padding:12px;color:#F15A22">Ad Copy</h2>
-    <div id="pane-heads" style="padding:10px"></div>
-    <div id="pane-descs" style="padding:10px"></div>
-    <button class="btn" id="closeSidebar" style="margin:10px">Close</button>
+    <label>Topic Override (optional)</label>
+    <input type="text" id="topic_override" placeholder="student loans"/>
+
+    <label>Seed Keywords (comma or newline separated) <span class="hint">(keywords you already selected; we’ll avoid duplicates and mark overlaps)</span></label>
+    <textarea id="seed_keywords" placeholder="student loans, repayment plan, interest rates"></textarea>
+
+    <label>Exclude Words <span class="hint">(optional, comma-separated; we’ll filter any keyword containing these)</span></label>
+    <input type="text" id="exclude_list" placeholder="worksheet, cheap, free download"/>
+
+    <div class="controls" style="margin-top:8px">
+      <div>
+        <label>Semantic similarity threshold <span class="tooltip" title="Higher = more aggressive deduplication (0.75 recommended)">?</span></label>
+        <input type="text" id="sim_threshold" value="0.75"/>
+      </div>
+      <div>
+        <label>Max suggested keywords <span class="tooltip" title="We’ll prune to this many after scoring & clustering">?</span></label>
+        <input type="text" id="max_keywords" value="180"/>
+      </div>
+      <div>
+        <label>Include educational intent?</label>
+        <select id="inc_edu"><option value="true" selected>Yes</option><option value="false">No</option></select>
+      </div>
+      <div>
+        <label>Include commercial intent?</label>
+        <select id="inc_comm"><option value="true">Yes</option><option value="false" selected>No</option></select>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn primary" id="generate">Generate</button>
+      <button class="btn" id="openCopy" disabled>Generate Ad Copy</button>
+      <button class="btn ghost" id="reset">Reset</button>
+      <span class="hint">Semantic clustering on. External feeds via proxies (config below).</span>
+    </div>
+
+    <div class="legend" style="margin-top:10px">
+      <b>Origin Legend:</b>
+      <div><span class="badge">Core</span> from your title/description/show</div>
+      <div><span class="badge">Templates</span> long-tail & question templates</div>
+      <div><span class="badge">Datamuse</span> semantic neighbors via Datamuse</div>
+      <div><span class="badge">Wikipedia</span> linked entities & pages</div>
+      <div><span class="badge">DDG</span> DuckDuckGo related topics</div>
+      <div><span class="badge">Books</span> OpenLibrary titles</div>
+      <div><span class="badge">StackEx</span> Q&A titles</div>
+      <div><span class="badge">Trends</span> Google Trends related queries</div>
+      <div><span class="badge">News</span> recent headlines/topics</div>
+      <div><span class="badge">Reddit</span> discussion threads</div>
+      <div><span class="badge">Suggest-G</span> Google Autocomplete</div>
+      <div><span class="badge">PAA</span> People Also Ask</div>
+      <div><span class="badge">Suggest-YT</span> YouTube Autocomplete</div>
+    </div>
+  </section>
+
+  <!-- Output -->
+  <section class="card">
+    <h2>Output</h2>
+
+    <div class="toolbar" style="margin-bottom:10px">
+      <div class="chips">
+        <div class="chip active" data-type="Core">Core</div>
+        <div class="chip active" data-type="LongTail">Long-Tail</div>
+        <div class="chip active" data-type="Related">Related</div>
+        <div class="chip active" data-type="Question">Questions</div>
+        <div class="chip active" data-type="Entity">Entities</div>
+        <div class="chip active" data-type="Discussion">Discussions</div>
+        <div class="chip active" data-type="Trend">Trends</div>
+        <div class="chip active" data-type="News">News</div>
+        <div class="chip active" data-type="Book">Books</div>
+        <div class="chip active" data-type="Suggest-G">Suggest-G</div>
+        <div class="chip active" data-type="PAA">PAA</div>
+        <div class="chip active" data-type="Suggest-YT">Suggest-YT</div>
+      </div>
+
+      <input type="text" id="search" placeholder="Filter…" style="background:#0d131c;border:1px solid var(--line);color:#e6edf3;border-radius:10px;padding:10px 12px;min-width:180px">
+      <select id="priorityFilter" class="btn">
+        <option value="">All priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
+      </select>
+      <select id="themeFilter" class="btn">
+        <option value="">All themes</option><option value="Brand / Show">Brand / Show</option><option value="Intent + Topic">Intent + Topic</option><option value="Pure Topic">Pure Topic</option>
+      </select>
+      <label style="margin-left:auto;display:flex;align-items:center;gap:6px">
+        <input type="checkbox" id="toggle_base" checked/> Show Base Term
+      </label>
+      <button class="btn" id="copyKeywords" title="Copy fully built keywords incl. match types">Copy Keywords</button>
+      <button class="btn" id="copyBase" title="Copy root/base terms only">Copy Base Terms</button>
+      <button class="btn" id="copyNegs" title="Copy default and detected negative keywords">Copy Negatives</button>
+      <button class="btn" id="exportJSON" title="Export rows as JSON">Export JSON</button>
+      <button class="btn" id="copyEditor" title="Copy TSV for Google Ads editor">Copy Editor TSV</button>
+    </div>
+
+    <div class="grid" id="view-table">
+      <table id="tbl">
+        <thead>
+        <tr>
+          <th data-k="theme">Theme</th>
+          <th data-k="type">Type</th>
+          <th data-k="priority">Priority</th>
+          <th data-k="score">Relevance</th>
+          <th data-k="opp">Opp.</th>
+          <th data-k="mtype">Match</th>
+          <th data-k="keyword">Keyword</th>
+          <th data-k="base">Base Term</th>
+          <th data-k="origin">Origin</th>
+          <th data-k="feedback">Feedback</th>
+          <th data-k="cluster">Cluster</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="viewtabs">
+      <div class="viewtab active" data-view="table">Table</div>
+      <div class="viewtab" data-view="clusters">Clusters</div>
+      <div class="viewtab" data-view="feeds">Feeds</div>
+    </div>
+
+    <div id="view-clusters" style="display:none"></div>
+    <div id="view-feeds" style="display:none"></div>
+
+    <div class="hint" id="footerNote">No results yet.</div>
+  </section>
+</main>
+
+<div class="footerbar">
+  <a href="https://www.prageru.com" target="_blank" rel="noopener noreferrer">Created by the PragerU Paid Media Team</a>
+</div>
+
+<!-- Ad Copy Sidebar -->
+<div class="sidebar" id="adSidebar">
+  <header>
+    <h3>Ad Copy – Responsive Search Ads</h3>
+    <button class="closex" id="closeSidebar">✕</button>
+  </header>
+  <div class="pane">
+    <div style="font-size:12px;color:#cdd7e5;margin-bottom:6px">
+      We auto-use your top clustered keywords for variety. Keep 30/90 char limits in mind.
+    </div>
+    <h4 style="margin:0 0 6px 0;color:#F15A22">Headlines</h4>
+    <div id="pane-heads"></div>
+    <h4 style="margin:12px 0 6px 0;color:#F15A22">Descriptions</h4>
+    <div id="pane-descs"></div>
+    <div class="toolbar" style="margin-top:10px">
+      <button class="btn" id="copyAssets">Copy All Assets</button>
+    </div>
   </div>
+</div>
 
-  <script>
-    /* ---------- Utilities ---------- */
-    const STOPWORDS=new Set("a an and are as at be by for from has have how i in into is it its just more new of on or our out the their them they this to up what when where which who why with your".split(" "));
-    function norm(s){return(s||"").normalize("NFKC").replace(/[–—]/g,"-").trim()}
-    function toks(s){s=norm(s.toLowerCase());const m=s.match(/[a-z0-9']+/g)||[];return m.filter(t=>!STOPWORDS.has(t))}
-    function unique(a){return[...new Set(a)]}
-    async function safeFetch(url,opts={},timeout=8000){
-      const controller=new AbortController();const id=setTimeout(()=>controller.abort(),timeout);
-      try{const r=await fetch(url,{...opts,signal:controller.signal});return r.ok?await r.json():null;}
-      catch(e){return null}finally{clearTimeout(id)}
+<script>
+/* ========================== CONFIG ========================== */
+const CONFIG={
+  PROXIES:{
+    trends:"/api/trends",
+    reddit:"/api/reddit",
+    news:"/api/news",
+    suggest_google:"/api/suggest/google",   // expects { q } -> [suggestions]
+    paa:"/api/paa",                         // expects { q } -> [questions]
+    suggest_youtube:"/api/suggest/youtube"  // expects { q } -> [suggestions]
+  }
+};
+
+/* ========================== CONSTANTS ========================== */
+const STOPWORDS=new Set("a an and are as at be by for from has have how i in into is it its just learn more new of on or our out quick step steps the their them they this to up video videos watch what when where which who why with your".split(" "));
+const INTENT_CORE=["watch","video","videos","free","online","explained","definition","guide","how to","course","class","lesson","for kids","for parents","101","basics","beginner","intro","tips","examples","pros and cons"];
+const COMMERCIAL_INTENT=["best","top","compare","comparison","reviews","near me","cost","price","affordable","cheap","premium"];
+const EDU_INTENT=["curriculum","worksheet","worksheets","printable","pdf","lesson plan","quiz","activities","activity","questions"];
+const DEFAULT_NEGATIVES=["torrent","lyrics","mp3","tiktok","discord","minecraft","fortnite","roblox","game","free download","pirated","streaming site","porn","nsfw","hack","cheat code"];
+
+/* ========================== UTILS ========================== */
+function norm(s){return(s||"").normalize("NFKC").replace(/[–—]/g,"-").trim()}
+function toks(s){s=norm(s.toLowerCase());const m=s.match(/[a-z0-9']+/g)||[];return m.filter(t=>!STOPWORDS.has(t)&&!/^[0-9]+$/.test(t))}
+function unique(a){const s=new Set(),o=[];for(const x of a){const k=String(x).toLowerCase();if(!s.has(k)){s.add(k);o.push(String(x))}}return o}
+function copyToClipboard(t){navigator.clipboard.writeText(t)}
+function clampLen(s,max){return s.length<=max?s:s.slice(0,max)}
+function nonempty(arr){return arr.filter(x=>x&&x.trim())}
+function parseCSVish(s){return unique((s||"").split(/[\n,]+/).map(x=>norm(x.toLowerCase())).filter(Boolean))}
+function safeNum(v,def){const n=Number(v);return Number.isFinite(n)?n:def}
+
+/* ========================== SAFE FETCH ========================== */
+async function safeFetch(url,opts={},timeout=10000){
+  const controller=new AbortController();const id=setTimeout(()=>controller.abort(),timeout);
+  try{const r=await fetch(url,{...opts,signal:controller.signal});return r.ok?await r.json():null}
+  catch(_){return null}finally{clearTimeout(id)}
+}
+
+/* ========================== SIMILARITY / EMBEDDINGS ========================== */
+let USE_MODEL=null;
+async function maybeLoadUSE(){
+  try{
+    if(!USE_MODEL && window.use && window.tf){ USE_MODEL=await use.load(); }
+  }catch(_){ USE_MODEL=null; }
+}
+async function embeddingsFor(texts){
+  if(!USE_MODEL){return null}
+  try{
+    const emb=await USE_MODEL.embed(texts);
+    const arr=await emb.array(); emb.dispose?.();
+    return arr;
+  }catch(_){return null}
+}
+function cosineSim(a,b){
+  let dot=0,na=0,nb=0;
+  for(let i=0;i<a.length;i++){dot+=a[i]*b[i];na+=a[i]*a[i];nb+=b[i]*b[i]}
+  return dot/(Math.sqrt(na)*Math.sqrt(nb)+1e-9)
+}
+function tokenJaccard(a,b){
+  const A=new Set(toks(a)),B=new Set(toks(b));
+  const inter=[...A].filter(x=>B.has(x)).length;
+  const uni=new Set([...A,...B]).size;
+  return uni?inter/uni:0;
+}
+
+/* ========================== MATCH TYPES / THEMES ========================== */
+function matchTypes(kw){return[["Broad",kw],["Phrase",`"${kw}"`],["Exact",`[${kw}]`]]}
+function themeForKeyword(k,brandTerms){
+  k=k.toLowerCase();
+  if(brandTerms.some(b=>k.includes(b)))return"Brand / Show";
+  if(INTENT_CORE.some(i=>k.includes(i)))return"Intent + Topic";
+  return"Pure Topic";
+}
+
+/* ========================== SCORING ========================== */
+function relevanceScore(kw,inp){
+  const k=kw.toLowerCase();
+  const tt=new Set(toks(inp.title)),dt=new Set(toks(inp.description)),st=new Set(toks(inp.show));
+  let s=0;
+  for(const t of tt)if(k.includes(t))s+=12;
+  for(const t of dt)if(k.includes(t))s+=4;
+  for(const t of st)if(k.includes(t))s+=8;
+  for(const i of INTENT_CORE)if(k.includes(i))s+=4;
+  if(inp.include_edu_intent)for(const ei of EDU_INTENT)if(k.includes(ei))s+=3;
+  if(inp.include_commercial_intent)for(const ci of COMMERCIAL_INTENT)if(k.includes(ci))s+=2;
+  const n=k.split(/\s+/).length;
+  if(2<=n&&n<=4)s+=5; else if(n===1)s-=1; else if(n>=7)s-=2;
+  return Math.max(0,s)
+}
+function heuristicKD(base){
+  const w=base.split(/\s+/).length;let kd=20+w*8;
+  const generic=["best","top","guide","lesson","class","definition","explained","video","videos","free","online"];
+  for(const g of generic)if(base.includes(g))kd+=6;
+  const rare=base.replace(/[^a-z]/g,"").length>18;if(rare)kd-=10;
+  if(base.length>=30)kd+=10;
+  return Math.max(5,Math.min(95,Math.round(kd)))
+}
+function priorityFromScore(s){return s>=28?"High":(s>=18?"Medium":"Low")}
+function recommendMatchType(s,theme){if(s>=35)return"Exact";if(s>=25)return"Phrase";return theme==="Brand / Show"?"Exact":"Broad"}
+function computeOpp(score,pop,kd,nov){
+  const popN=(Math.log1p(Math.max(0,pop||0))/Math.log1p(100000))||0;
+  const diff=1-(kd/100);
+  const nv=Math.min(1,Math.max(0,nov||0));
+  return Math.round((score*(0.55+0.45*popN))*Math.max(0.45,diff)*(0.9+0.2*nv)*10)/10;
+}
+
+/* ========================== ENGINES ========================== */
+class KeywordEngine{
+  constructor(){
+    this.rows=[];
+    this.baseSet=new Set();
+    this.originByBase=new Map();
+    this.typeByBase=new Map();
+    this.novByBase=new Map();
+    this.wikiAvgByTerm={};
+    this.clusters={};
+    this.feeds={trends:[],news:[],questions:[],discussions:[],entities:[],books:[],related:[],suggestG:[],paa:[],suggestYT:[]};
+    this.seedSet=new Set(); // existing selected keywords
+  }
+
+  reset(){
+    this.rows=[];
+    this.baseSet.clear();
+    this.originByBase.clear();
+    this.typeByBase.clear();
+    this.novByBase.clear();
+    this.wikiAvgByTerm={};
+    this.clusters={};
+    this.feeds={trends:[],news:[],questions:[],discussions:[],entities:[],books:[],related:[],suggestG:[],paa:[],suggestYT:[]};
+    this.seedSet.clear();
+  }
+
+  setSeeds(list){ this.seedSet=new Set(list.map(x=>x.toLowerCase())) }
+
+  extractTopics(inp){
+    const tt=toks(inp.title),dt=toks(inp.description),st=toks(inp.show);
+    const counts={};[...tt,...dt].forEach(w=>counts[w]=(counts[w]||0)+1);
+    const common=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,30).map(x=>x[0]);
+    const boosted=unique([...st,...common]);
+    let topicPhrases=[];
+    if(inp.topic_override)topicPhrases.push(norm(inp.topic_override.toLowerCase()));
+    topicPhrases=unique([...boosted.filter(w=>w.length>2),...this.ngrams(tt,2),...this.ngrams(tt,3),...topicPhrases]).slice(0,40);
+    return{core_terms:unique([...tt,...st]),topic_phrases:topicPhrases}
+  }
+
+  ngrams(a,n){const o=[];for(let i=0;i<=a.length-n;i++)o.push(a.slice(i,i+n).join(" "));return o}
+
+  buildKeywordPhrases(inp,parts){
+    const brand=unique([inp.brand,inp.brand_variant,inp.show,inp.host].map(x=>norm(String(x||"").toLowerCase())).filter(Boolean));
+    let intents=[...INTENT_CORE];
+    if(inp.include_commercial_intent)intents=intents.concat(COMMERCIAL_INTENT);
+    if(inp.include_edu_intent)intents=intents.concat(EDU_INTENT);
+    const cand=[];
+    const topics=parts.topic_phrases.length?parts.topic_phrases:parts.core_terms;
+    const combos=(l,r)=>{const o=[];for(const a of l){for(const b of r){o.push(`${a} ${b}`,`${b} ${a}`)}}return o}
+    cand.push(...unique(topics));
+    cand.push(...unique(combos(topics,intents)));
+    if(brand.length){
+      cand.push(...unique(combos(topics,brand)));
+      cand.push(...unique(combos(brand,intents)));
+    }
+    const clean=unique(cand.map(c=>c.replace(/\s+/g," ").trim()).filter(c=>c.length>=2&&c.length<=60));
+    return{brand_terms:brand,keywords:clean}
+  }
+
+  /* ---------- FEEDS (plugins) ---------- */
+  async datamuseAll(q){
+    if(!q)return{ml:[],trg:[],jja:[],jjb:[]};
+    const base=`https://api.datamuse.com/words?`;
+    const us=[`${base}ml=${encodeURIComponent(q)}&max=40`,`${base}rel_trg=${encodeURIComponent(q)}&max=40`,`${base}rel_jja=${encodeURIComponent(q)}&max=30`,`${base}rel_jjb=${encodeURIComponent(q)}&max=30`];
+    try{
+      const rs=await Promise.all(us.map(u=>safeFetch(u).catch(_=>[])));
+      return{ml:(rs[0]||[]).map(x=>x.word||x),trg:(rs[1]||[]).map(x=>x.word||x),jja:(rs[2]||[]).map(x=>x.word||x),jjb:(rs[3]||[]).map(x=>x.word||x)}
+    }catch(_){return{ml:[],trg:[],jja:[],jjb:[]}}
+  }
+  async wikiEntities(seed){
+    try{
+      const u=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(seed)}&srlimit=1&format=json&origin=*`;
+      const j=await safeFetch(u); const title=j?.query?.search?.[0]?.title; if(!title)return[];
+      const links=`https://en.wikipedia.org/w/api.php?action=query&prop=links&titles=${encodeURIComponent(title)}&pllimit=50&format=json&origin=*`;
+      const jj=await safeFetch(links);const pages=jj?.query?.pages||{};const arr=Object.values(pages)[0]?.links||[];
+      return arr.map(x=>x.title.toLowerCase()).filter(x=>x.length<40)
+    }catch(_){return[]}
+  }
+  async duckRelated(seed){
+    try{
+      const u=`https://api.duckduckgo.com/?q=${encodeURIComponent(seed)}&format=json&no_redirect=1&no_html=1`;
+      const j=await safeFetch(u);const rel=(j?.RelatedTopics||[]).flatMap(x=>x.Topics?x.Topics:x);
+      return unique(rel.map(t=>t.Text?.toLowerCase?.()||'').filter(Boolean))
+    }catch(_){return[]}
+  }
+  async openLibrary(seed){
+    try{
+      const u=`https://openlibrary.org/search.json?q=${encodeURIComponent(seed)}`;
+      const j=await safeFetch(u); return unique((j?.docs||[]).slice(0,30).map(d=>d.title).filter(Boolean).map(x=>x.toLowerCase()))
+    }catch(_){return[]}
+  }
+  async stackEx(seed){
+    const sites=['money','academia','parenting','history'];
+    const qs=[];
+    await Promise.all(sites.map(async s=>{
+      try{
+        const u=`https://api.stackexchange.com/2.3/search/excerpts?order=desc&sort=relevance&q=${encodeURIComponent(seed)}&site=${s}`;
+        const j=await safeFetch(u); (j?.items||[]).forEach(it=>{if(it.title)qs.push(it.title.toLowerCase())})
+      }catch(_){}
+    }));
+    return unique(qs)
+  }
+  async trends(seed){
+    const url=CONFIG.PROXIES.trends;
+    try{
+      const r=await safeFetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:seed})});
+      return r||{score:0,queries:[]}
+    }catch(_){return{score:0,queries:[]}}
+  }
+  async news(seed){
+    try{ return await safeFetch(`${CONFIG.PROXIES.news}?q=${encodeURIComponent(seed)}`)||[] }catch(_){return[]}
+  }
+  async reddit(seed){
+    try{ return await safeFetch(`${CONFIG.PROXIES.reddit}?q=${encodeURIComponent(seed)}`)||[] }catch(_){return[]}
+  }
+  async suggestGoogle(seed){
+    try{
+      const r=await safeFetch(CONFIG.PROXIES.suggest_google,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:seed})});
+      return Array.isArray(r)?r:[]; }catch(_){return[]}
+  }
+  async paa(seed){
+    try{
+      const r=await safeFetch(CONFIG.PROXIES.paa,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:seed})});
+      return Array.isArray(r)?r:[]; }catch(_){return[]}
+  }
+  async suggestYT(seed){
+    try{
+      const r=await safeFetch(CONFIG.PROXIES.suggest_youtube,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:seed})});
+      return Array.isArray(r)?r:[]; }catch(_){return[]}
+  }
+
+  /* ---------- Clustering helpers ---------- */
+  makeClusters(bases){
+    const freq={};const tokenized=bases.map(b=>({b,t:toks(b)}));
+    for(const {t} of tokenized){for(const w of t){freq[w]=(freq[w]||0)+1}}
+    const keys=new Set(Object.entries(freq).filter(([w,c])=>c>1&&!STOPWORDS.has(w)&&w.length>2).map(([w])=>w));
+    const cl={};for(const {b,t} of tokenized){const hit=t.find(w=>keys.has(w))||t[0]||b.split(' ')[0];const k=hit||b;(cl[k]??=[]).push(b)}
+    return cl
+  }
+  assignClusters(){ this.clusters=this.makeClusters(Array.from(this.baseSet)) }
+
+  clusterKeyFor(base){ for(const k in this.clusters){ if(this.clusters[k].includes(base))return k } return '' }
+
+  /* ---------- Row building ---------- */
+  buildRowsForBases(bases,brandTerms){
+    const temp=[];
+    for(const base of bases){
+      const score=relevanceScore(base,this._inp),
+            priority=priorityFromScore(score),
+            theme=themeForKeyword(base,brandTerms),
+            rec=recommendMatchType(score,theme),
+            kd=heuristicKD(base.toLowerCase()),
+            nov=this.novByBase.get(base)||0,
+            type=this.typeByBase.get(base)||'Core',
+            cluster=this.clusterKeyFor(base);
+      for(const [mtype,rendered] of matchTypes(base)){
+        const feedback=this.makeFeedback(base,score,kd);
+        temp.push({
+          theme, type, priority, score,
+          opp:computeOpp(score,this.wikiAvgByTerm[base],kd,nov),
+          mtype, keyword:rendered, base,
+          rec, origin:this.originByBase.get(base)||'Core',
+          feedback, cluster
+        });
+      }
+    }
+    this.rows=this.rows.concat(temp)
+  }
+
+  makeFeedback(base,score,kd){
+    let bits=[];
+    if(score>=30) bits.push("✅ High intent");
+    if(base.split(' ').length>=4) bits.push("🎯 Long-tail");
+    if(kd>=70) bits.push("⚠️ Competitive");
+    if(this.seedSet.has(base)) bits.push("🔁 Already selected");
+    if(bits.length===0) bits.push("—");
+    return bits.join(' · ')
+  }
+
+  addBatch(bases,origin,type,nov){
+    const brandTerms=unique([this._inp.brand,this._inp.brand_variant,this._inp.show,this._inp.host].map(x=>String(x||'').toLowerCase()).filter(Boolean));
+    const newBases=[];
+    for(const b of bases){
+      const v=b.toLowerCase().trim();
+      if(!v) continue;
+      if(v.length>60) continue;
+      if(this.baseSet.has(v)) continue;
+      // exclude if in seed list
+      if(this.seedSet.has(v)) { this.baseSet.add(v); this.originByBase.set(v,origin); this.typeByBase.set(v,type); this.novByBase.set(v,nov||0); newBases.push(v); continue; }
+      this.baseSet.add(v); this.originByBase.set(v,origin); this.typeByBase.set(v,type); if(nov) this.novByBase.set(v,nov);
+      newBases.push(v);
+    }
+    if(!newBases.length) return;
+    this.assignClusters();
+    this.buildRowsForBases(newBases,brandTerms);
+    // schedule wiki popularity fetch (light)
+    this.scheduleWikiFetch(newBases.slice(0,20));
+  }
+
+  /* ---------- Wiki popularity ---------- */
+  async fetchWikiAvgTerm(term){
+    const yyyymmdd=d=>`${d.getUTCFullYear()}${('0'+(d.getUTCMonth()+1)).slice(-2)}${('0'+d.getUTCDate()).slice(-2)}`
+    async function wikiTitleFor(t){
+      try{ const u=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(t)}&srlimit=1&format=json&origin=*`;
+        const j=await safeFetch(u); return j?.query?.search?.[0]?.title||null }catch(_){return null}
+    }
+    async function wikiAvg(title){
+      try{
+        const end=new Date();const start=new Date(Date.now()-60*24*60*60*1000);
+        const u=`https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/${encodeURIComponent(title)}/daily/${yyyymmdd(start)}/${yyyymmdd(end)}`;
+        const j=await safeFetch(u);const arr=(j?.items||[]).map(x=>x.views); if(!arr.length)return 0; return arr.reduce((a,b)=>a+b,0)/arr.length
+      }catch(_){return 0}
+    }
+    if(this.wikiAvgByTerm[term]!==undefined) return;
+    const title=await wikiTitleFor(term); const avg=title?await wikiAvg(title):0;
+    this.wikiAvgByTerm[term]=avg;
+    const kd=heuristicKD(term);
+    for(const r of this.rows){ if(r.base===term){ r.opp=computeOpp(r.score,avg,kd,this.novByBase.get(term)||0) } }
+  }
+  scheduleWikiFetch(bases){ Promise.all(bases.map(b=>this.fetchWikiAvgTerm(b))).then(()=>UI.render()) }
+
+  /* ---------- Main generate ---------- */
+  async generate(inp,opts){
+    this.reset();
+    this._inp={...inp};
+    this._inp.include_edu_intent=String(inp.include_edu_intent)==="true";
+    this._inp.include_commercial_intent=String(inp.include_commercial_intent)==="true";
+
+    const parts=this.extractTopics(this._inp);
+    const built=this.buildKeywordPhrases(this._inp,parts);
+    const seeds=parts.topic_phrases.length?parts.topic_phrases:parts.core_terms;
+
+    // Core
+    this.addBatch(built.keywords,'Core','Core',0);
+
+    // Templates
+    this.addBatch(this.buildLongTails(seeds),'Templates','LongTail',0.15);
+
+    // Feeds (in parallel)
+    const seedQ=this._inp.topic_override||seeds[0]||this._inp.title||this._inp.show||this._inp.brand||'';
+    const [dm,ents,ddg,bks,qs,tr,ns,rd,sg,pa,yt]=await Promise.all([
+      this.datamuseAll(seedQ).catch(()=>({ml:[],trg:[],jja:[],jjb:[]})),
+      this.wikiEntities(seedQ).catch(()=>[]),
+      this.duckRelated(seedQ).catch(()=>[]),
+      this.openLibrary(seedQ).catch(()=>[]),
+      this.stackEx(seedQ).catch(()=>[]),
+      this.trends(seedQ).catch(()=>({score:0,queries:[]})),
+      this.news(seedQ).catch(()=>[]),
+      this.reddit(seedQ).catch(()=>[]),
+      this.suggestGoogle(seedQ).catch(()=>[]),
+      this.paa(seedQ).catch(()=>[]),
+      this.suggestYT(seedQ).catch(()=>[]),
+    ]);
+
+    const related=unique([...(dm.ml||[]),...(dm.trg||[]),...(dm.jja||[]),...(dm.jjb||[])]).map(x=>String(x).toLowerCase()).filter(x=>x.length<60);
+    this.addBatch(related,'Datamuse','Related',0.2); this.feeds.related=related.slice(0,50);
+
+    const entities=unique((ents||[]).slice(0,80)); this.addBatch(entities,'Wikipedia','Entity',0.2); this.feeds.entities=entities.slice(0,50);
+
+    const ddg=unique(ddg||[]).slice(0,80); this.addBatch(ddg,'DDG','Related',0.15);
+
+    const books=unique((bks||[]).slice(0,60)); this.addBatch(books,'Books','Book',0.05); this.feeds.books=books.slice(0,50);
+
+    const questions=unique([...qs,...this.buildQuestionsTemplates(seeds)]).slice(0,120); this.addBatch(questions,'StackEx/Templates','Question',0.4); this.feeds.questions=questions.slice(0,60);
+
+    const trendQueries=unique(((tr?.queries)||[]).map(x=>String(x).toLowerCase())).slice(0,60);
+    if(trendQueries.length){ this.addBatch(trendQueries,'Trends','Trend',0.6); this.feeds.trends=trendQueries.slice(0,50); }
+
+    const newsKeys=unique((ns||[]).map(x=>String(x).toLowerCase())).slice(0,80);
+    if(newsKeys.length){ this.addBatch(newsKeys,'News','News',0.9); this.feeds.news=newsKeys.slice(0,50); }
+
+    const discussions=unique((rd||[]).map(x=>String(x).toLowerCase())).slice(0,120);
+    if(discussions.length){ this.addBatch(discussions,'Reddit','Discussion',0.5); this.feeds.discussions=discussions.slice(0,50); }
+
+    const suggestG=unique((sg||[])).slice(0,80); if(suggestG.length){ this.addBatch(suggestG,'Suggest-G','Related',0.5); this.feeds.suggestG=suggestG }
+    const paa=unique((pa||[])).slice(0,80); if(paa.length){ this.addBatch(paa,'PAA','Question',0.6); this.feeds.paa=paa }
+    const suggestYT=unique((yt||[])).slice(0,80); if(suggestYT.length){ this.addBatch(suggestYT,'Suggest-YT','Related',0.5); this.feeds.suggestYT=suggestYT }
+
+    // Filter by Exclude List
+    if(opts.exclude && opts.exclude.size){
+      this.rows=this.rows.filter(r=>{
+        const low=(r.base||'').toLowerCase();
+        for(const ex of opts.exclude){ if(low.includes(ex)) return false }
+        return true;
+      });
+      this.baseSet=new Set(this.rows.map(r=>r.base));
     }
 
-    /* ---------- Keyword Engine ---------- */
-    class KeywordEngine {
-      constructor(){this.rows=[]}
-      reset(){this.rows=[]}
+    // Semantic dedup + pruning
+    await this.semanticDedupAndPrune(opts.simThreshold, opts.maxKeywords);
 
-      extractTopics(inp){
-        const tt=toks(inp.title),dt=toks(inp.description),st=toks(inp.show);
-        const all=[...tt,...dt];const counts={};all.forEach(w=>counts[w]=(counts[w]||0)+1);
-        const common=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,20).map(x=>x[0]);
-        return{core_terms:unique([...tt,...st]),topic_phrases:unique([...common,...st])}
-      }
+    // Recompute clusters for final list
+    this.assignClusters();
 
-      async fetchFeeds(seed){
-        const results={}
-        results.datamuse=await this.datamuse(seed)
-        results.wiki=await this.wikiEntities(seed)
-        results.ddg=await this.duckRelated(seed)
-        results.books=await this.openLibrary(seed)
-        results.stack=await this.stackEx(seed)
-        return results
-      }
+    return this.rows;
+  }
 
-      async datamuse(q){
-        const u=`https://api.datamuse.com/words?ml=${encodeURIComponent(q)}&max=20`
-        const j=await safeFetch(u);return j?(j.map(x=>x.word)):[]
-      }
-      async wikiEntities(seed){
-        const u=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(seed)}&srlimit=5&format=json&origin=*`
-        const j=await safeFetch(u);return j?.query?.search?.map(x=>x.title.toLowerCase())||[]
-      }
-      async duckRelated(seed){
-        const u=`https://api.duckduckgo.com/?q=${encodeURIComponent(seed)}&format=json&no_html=1`
-        const j=await safeFetch(u);return j?(j.RelatedTopics||[]).map(x=>x.Text).filter(Boolean):[]
-      }
-      async openLibrary(seed){
-        const u=`https://openlibrary.org/search.json?q=${encodeURIComponent(seed)}`
-        const j=await safeFetch(u);return j?(j.docs||[]).slice(0,10).map(d=>d.title.toLowerCase()):[]
-      }
-      async stackEx(seed){
-        const u=`https://api.stackexchange.com/2.3/search/excerpts?order=desc&sort=relevance&q=${encodeURIComponent(seed)}&site=parenting`
-        const j=await safeFetch(u);return j?(j.items||[]).map(it=>it.title):[]
-      }
+  buildLongTails(seeds){
+    const who=["for kids","for teens","for parents","for teachers","for beginners","for homeschool"];
+    const learn=["how to","what is","why","examples","tips","explained","101","basics","beginner","advanced"];
+    const action=["learn","study","explain","understand","compare","avoid","improve"];
+    const suffix=["worksheet","worksheets","lesson plan","quiz","activities","pdf"];
+    const out=[];
+    for(const s of seeds){
+      for(const w of learn){out.push(`${w} ${s}`)}
+      for(const aud of who){out.push(`${s} ${aud}`)}
+      for(const act of action){out.push(`${act} ${s}`)}
+      for(const sx of suffix){out.push(`${s} ${sx}`)}
+      out.push(`${s} near me`,`${s} 2025`)
+    }
+    return unique(out)
+  }
 
-      scoreKeyword(kw,inp){
-        let score=0
-        if(inp.title.toLowerCase().includes(kw))score+=10
-        if(inp.description.toLowerCase().includes(kw))score+=5
-        if(inp.show.toLowerCase().includes(kw))score+=6
-        if(kw.split(" ").length<=4)score+=4
-        if(kw.length>20)score-=2
-        return Math.max(0,score)
-      }
+  buildQuestionsTemplates(seeds){
+    const out=[];
+    for(const s of seeds){
+      out.push(`what is ${s}`,`how to ${s}`,`why is ${s} important`,`can you ${s}`,`should i ${s}`,`when does ${s} start`,`where to learn ${s}`)
+    }
+    return unique(out)
+  }
 
-      async generate(inp){
-        const parts=this.extractTopics(inp)
-        const seed=inp.topic_override||parts.topic_phrases[0]||inp.title
-        const feeds=await this.fetchFeeds(seed)
-        const all=unique([...parts.core_terms,...parts.topic_phrases,...feeds.datamuse,...feeds.wiki,...feeds.ddg,...feeds.books,...feeds.stack])
-        this.rows=all.map(k=>({keyword:k,score:this.scoreKeyword(k,inp)}))
-        return this.rows.sort((a,b)=>b.score-a.score)
+  /* ---------- Semantic Dedup & Prune ---------- */
+  async semanticDedupAndPrune(simThreshold=0.75,maxKeep=180){
+    // Build base list with highest opp per base
+    const bestByBase=new Map();
+    for(const r of this.rows){ const cur=bestByBase.get(r.base); if(!cur||r.opp>cur.opp){ bestByBase.set(r.base,r) } }
+    let bases=[...bestByBase.values()].map(r=>r.base);
+
+    // Try embeddings; fallback to token similarity if failed
+    await maybeLoadUSE();
+    let embs=null;
+    if(bases.length>0){ embs=await embeddingsFor(bases.slice(0,400)); } // cap for perf
+    const idxCap = embs ? Math.min(embs.length,bases.length) : bases.length;
+    const keep=[];
+    const used=new Set();
+
+    for(let i=0;i<idxCap;i++){
+      if(used.has(i)) continue;
+      keep.push(bases[i]);
+      used.add(i);
+      for(let j=i+1;j<idxCap;j++){
+        if(used.has(j)) continue;
+        const sim = embs ? cosineSim(embs[i],embs[j]) : tokenJaccard(bases[i],bases[j]);
+        if(sim>=simThreshold){ used.add(j); }
       }
     }
 
-    /* ---------- Ad Copy Engine ---------- */
-    class AdCopyEngine {
-      buildHeadlines(topic,brand){
-        return unique([
-          `${topic} 101`,`Learn ${topic} Today`,`${topic} Explained`,
-          `${brand} ${topic}`,`Free ${topic} Lessons`
-        ]).slice(0,10)
-      }
-      buildDescriptions(topic,brand){
-        return [
-          `Learn ${topic} with ${brand}. Trusted free videos.`,
-          `${brand} makes ${topic} simple and clear.`,
-          `Watch ${topic} lessons anytime.`
-        ]
-      }
+    // Rebuild rows for kept bases only
+    const keepSet=new Set(keep);
+    this.rows=this.rows.filter(r=>keepSet.has(r.base));
+
+    // If too many, prune by Opportunity then Relevance
+    if(this.rows.length>maxKeep*3){
+      this.rows=this.rows.sort((a,b)=>b.opp-a.opp||b.score-a.score).slice(0,maxKeep*3);
     }
-
-    /* ---------- UI Controller ---------- */
-    class UIController {
-      constructor(){
-        this.keywordEngine=new KeywordEngine()
-        this.adEngine=new AdCopyEngine()
-        this.bindUI()
-      }
-      bindUI(){
-        document.getElementById("generate").onclick=()=>this.generate()
-        document.getElementById("reset").onclick=()=>this.reset()
-        document.getElementById("openCopy").onclick=()=>this.openCopy()
-        document.getElementById("closeSidebar").onclick=()=>document.getElementById("adSidebar").classList.remove("open")
-      }
-      async generate(){
-        const inp={title:val("title"),description:val("description"),show:val("show"),brand:val("brand"),topic_override:val("topic_override")}
-        const rows=await this.keywordEngine.generate(inp)
-        const table=`<table><tr><th>Keyword</th><th>Score</th><th>Priority</th></tr>`+
-          rows.slice(0,40).map(r=>{
-            const p=r.score>15?"High":r.score>8?"Medium":"Low"
-            return `<tr><td>${r.keyword}</td><td>${r.score}</td><td><span class="pill ${p.toLowerCase()}">${p}</span></td></tr>`
-          }).join("")+`</table>`
-        document.getElementById("outputArea").innerHTML=table
-        document.getElementById("openCopy").disabled=false
-      }
-      reset(){
-        this.keywordEngine.reset()
-        ["title","description","show","brand","topic_override"].forEach(id=>setval(id,""))
-        document.getElementById("outputArea").innerHTML="Reset."
-        document.getElementById("openCopy").disabled=true
-      }
-      openCopy(){
-        const topic=val("topic_override")||val("title")||"Topic"
-        const brand=val("brand")||"PragerU"
-        const H=this.adEngine.buildHeadlines(topic,brand)
-        const D=this.adEngine.buildDescriptions(topic,brand)
-        document.getElementById("pane-heads").innerHTML=H.map(h=>`<div>${h}</div>`).join("")
-        document.getElementById("pane-descs").innerHTML=D.map(d=>`<div>${d}</div>`).join("")
-        document.getElementById("adSidebar").classList.add("open")
-      }
+    // Then keep top N distinct bases by best opp
+    const distinctBest=new Map();
+    for(const r of this.rows){
+      const cur=distinctBest.get(r.base);
+      if(!cur||r.opp>cur.opp){ distinctBest.set(r.base,r) }
     }
+    const topBases=[...distinctBest.values()].sort((a,b)=>b.opp-a.opp||b.score-a.score).slice(0,maxKeep).map(r=>r.base);
+    const topSet=new Set(topBases);
+    this.rows=this.rows.filter(r=>topSet.has(r.base));
+  }
+}
 
-    /* ---------- Helpers ---------- */
-    function val(id){return document.getElementById(id).value}
-    function setval(id,v){document.getElementById(id).value=v}
+/* ========================== AD COPY ENGINE ========================== */
+class AdCopyEngine{
+  topBases(rows,n){
+    const m=new Map();
+    for(const r of rows){ m.set(r.base,Math.max(m.get(r.base)||0,r.opp)) }
+    return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]).slice(0,n).map(x=>x[0]);
+  }
+  makeHeads(topic,brand,bases){
+    const H=[];
+    const seed=bases[0]||topic||'';
+    const seed2=bases[1]||'';
+    // Tones: Direct CTA, Value, Authority
+    H.push(`Watch ${seed} Free`, `${seed} 101`, `${seed} Explained`, `${seed} for Kids`, `${seed} Basics`);
+    H.push(`${brand} ${seed}`, `${seed2} | ${brand}`, `Learn ${seed} Today`, `Start ${seed} Now`, `Trusted ${seed}`);
+    return nonempty(unique(H)).map(x=>clampLen(x,30)).slice(0,15);
+  }
+  makeDescs(topic,brand,bases){
+    const seed=bases[0]||topic||'';
+    const D=[];
+    D.push(`${brand} explains ${seed} in plain English. Watch free now.`);
+    D.push(`Short, clear lessons on ${seed}. Join millions on ${brand}.`);
+    D.push(`Learn ${seed} with trusted experts at ${brand}.`);
+    D.push(`Get answers on ${seed} in minutes. Start free on ${brand}.`);
+    return nonempty(unique(D)).map(x=>clampLen(x,90)).slice(0,4);
+  }
+}
 
-    /* ---------- Init ---------- */
-    new UIController()
-  </script>
+/* ========================== UI CONTROLLER ========================== */
+class UIController{
+  constructor(){
+    this.engine=new KeywordEngine();
+    this.ad=new AdCopyEngine();
+    this.rows=[];
+    this.currentSort={key:"opp",dir:"desc"};
+    this.negatives=[...DEFAULT_NEGATIVES];
+    this.bindUI();
+    this.defaults();
+  }
+
+  defaults(){
+    setval("title","Cash Course: Student Loans 101");
+    setval("description","A friendly intro to student loans for teens and parents: how they work, interest, repayment, and pitfalls to avoid.");
+    setval("show","Cash Course");
+    setval("brand","PragerU Kids");
+    setval("topic_override","student loans");
+  }
+
+  bindUI(){
+    document.getElementById("generate").onclick=()=>this.generate();
+    document.getElementById("reset").onclick=()=>this.reset();
+    document.getElementById("openCopy").onclick=()=>this.openCopy();
+    document.getElementById("closeSidebar").onclick=()=>document.getElementById("adSidebar").classList.remove("open");
+    document.querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>this.sort(th)));
+    document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{c.classList.toggle('active');this.render()});
+    document.getElementById('search').oninput=()=>this.render();
+    document.querySelectorAll('.viewtab').forEach(v=>v.onclick=()=>this.switchView(v));
+    document.getElementById("copyKeywords").onclick=()=>this.copyKeywords();
+    document.getElementById("copyBase").onclick=()=>this.copyBase();
+    document.getElementById("copyNegs").onclick=()=>copyToClipboard(this.negatives.join("\n"));
+    document.getElementById("exportJSON").onclick=()=>this.exportJSON();
+    document.getElementById("copyEditor").onclick=()=>this.copyEditorTSV();
+    document.getElementById("toggle_base").onchange=()=>this.toggleBaseColumn();
+  }
+
+  async generate(){
+    document.getElementById("openCopy").disabled=true;
+
+    const seeds=parseCSVish(val('seed_keywords'));
+    this.engine.setSeeds(seeds);
+
+    const excludeSet=new Set(parseCSVish(val('exclude_list')));
+    const simThreshold=safeNum(val('sim_threshold'),0.75);
+    const maxKeywords=Math.max(30,Math.min(1000,Math.floor(safeNum(val('max_keywords'),180))));
+
+    const inp={
+      title:val('title'),
+      description:val('description'),
+      show:val('show'),
+      host:'',
+      brand:val('brand'),
+      brand_variant:'',
+      topic_override:val('topic_override'),
+      include_edu_intent:val('inc_edu'),
+      include_commercial_intent:val('inc_comm')
+    };
+
+    this.rows=await this.engine.generate(inp,{exclude:excludeSet,simThreshold,maxKeywords});
+    this.render();
+    this.renderClusters();
+    this.renderFeeds();
+    document.getElementById("openCopy").disabled=false;
+  }
+
+  reset(){
+    ["title","description","show","brand","topic_override","seed_keywords","exclude_list","search"].forEach(id=>setval(id,""));
+    setval("inc_edu","true"); setval("inc_comm","false");
+    setval("sim_threshold","0.75"); setval("max_keywords","180");
+    this.engine.reset(); this.rows=[]; this.render(); this.renderClusters();
+    document.getElementById('view-feeds').innerHTML='';
+    document.getElementById('openCopy').disabled=true;
+  }
+
+  sort(th){
+    const key=th.getAttribute("data-k");
+    if(this.currentSort.key===key){ this.currentSort.dir=this.currentSort.dir==="asc"?"desc":"asc" }
+    else{ this.currentSort.key=key; this.currentSort.dir=(key==="opp"||key==="score")?"desc":"asc" }
+    this.render();
+  }
+
+  switchView(v){
+    document.querySelectorAll('.viewtab').forEach(x=>x.classList.remove('active'));
+    v.classList.add('active');
+    const view=v.getAttribute('data-view');
+    document.getElementById('view-table').style.display=(view==='table')?'block':'none';
+    document.getElementById('view-clusters').style.display=(view==='clusters')?'block':'none';
+    document.getElementById('view-feeds').style.display=(view==='feeds')?'block':'none';
+  }
+
+  toggleBaseColumn(){
+    const show=document.getElementById('toggle_base').checked;
+    const idx=7; // base column index (0-based)
+    document.querySelectorAll('#tbl tr').forEach(tr=>{
+      const td=tr.children[idx]; if(td){ td.style.display=show?'table-cell':'none' }
+    });
+  }
+
+  /* ---------- Rendering ---------- */
+  render(){
+    const pf=val("priorityFilter"),tf=val("themeFilter");
+    const q=(val("search")||"").toLowerCase();
+    const chips=[...document.querySelectorAll('.chip.active')].map(x=>x.getAttribute('data-type'));
+    const tbody=document.querySelector("#tbl tbody"); tbody.innerHTML="";
+
+    let view=this.rows.slice();
+    view=view.filter(r=>chips.includes(r.type));
+    if(pf) view=view.filter(r=>r.priority===pf);
+    if(tf) view=view.filter(r=>r.theme===tf);
+    if(q)  view=view.filter(r=>r.base.toLowerCase().includes(q)||r.keyword.toLowerCase().includes(q)||r.feedback.toLowerCase().includes(q));
+
+    view.sort((a,b)=>{
+      const d=this.currentSort.dir==="asc"?1:-1; const k=this.currentSort.key;
+      if(k==="score"||k==="opp")return(a[k]-b[k])*d;
+      return String(a[k]).localeCompare(String(b[k]))*d;
+    });
+
+    for(const r of view){
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>${r.theme}</td>
+        <td>${r.type}</td>
+        <td><span class="pill ${r.priority==='High'?'high':(r.priority==='Medium'?'med':'low')}">${r.priority}</span></td>
+        <td>${r.score.toFixed(1)}</td>
+        <td>${r.opp.toFixed(1)}</td>
+        <td>${r.mtype} <span class="hint">(${r.rec})</span></td>
+        <td>${r.keyword}${this.engine.seedSet.has(r.base)?' <span class="badge warn">Already Selected</span>':''}</td>
+        <td>${r.base}</td>
+        <td><span class="badge">${r.origin||'Core'}</span></td>
+        <td>${r.feedback}</td>
+        <td>${r.cluster||'-'}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+    document.getElementById("footerNote").textContent=view.length?`${view.length} rows (filtered)`:"No results yet.";
+    this.toggleBaseColumn(); // apply current toggle state
+  }
+
+  renderClusters(){
+    const box=document.getElementById('view-clusters'); box.innerHTML='';
+    const entries=Object.entries(this.engine.clusters).sort((a,b)=>b[1].length-a[1].length);
+    for(const [k,arr] of entries){
+      const div=document.createElement('div'); div.className='cluster';
+      div.innerHTML=`
+        <h4>${k} <small>(${arr.length})</small></h4>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0">${arr.slice(0,10).map(x=>`<span class="chip">${x}</span>`).join(' ')}</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" data-act="view" data-k="${k}">View in table</button>
+          <button class="btn" data-act="copy" data-k="${k}">Generate Ad Copy</button>
+        </div>`;
+      box.appendChild(div);
+    }
+    box.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      const k=b.getAttribute('data-k');
+      if(b.getAttribute('data-act')==='view'){ this.filterToCluster(k) } else { this.openAdCopyForCluster(k) }
+    });
+  }
+
+  renderFeeds(){
+    const box=document.getElementById('view-feeds');
+    const sec=(title,items)=>`<div class="card" style="margin-bottom:10px"><h2>${title}</h2><div style="display:flex;gap:6px;flex-wrap:wrap">${(items||[]).slice(0,60).map(x=>`<span class="chip">${x}</span>`).join(' ')}</div></div>`;
+    box.innerHTML=
+      sec('Suggest-G',this.engine.feeds.suggestG)+
+      sec('PAA',this.engine.feeds.paa)+
+      sec('Suggest-YT',this.engine.feeds.suggestYT)+
+      sec('Trends',this.engine.feeds.trends)+
+      sec('News',this.engine.feeds.news)+
+      sec('Questions',this.engine.feeds.questions)+
+      sec('Discussions',this.engine.feeds.discussions)+
+      sec('Entities',this.engine.feeds.entities)+
+      sec('Books',this.engine.feeds.books)+
+      sec('Related',this.engine.feeds.related);
+  }
+
+  filterToCluster(k){
+    const bases=new Set(this.engine.clusters[k]||[]);
+    const tbody=document.querySelector('#tbl tbody'); tbody.innerHTML='';
+    this.rows.filter(r=>bases.has(r.base)).forEach(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td>${r.theme}</td>
+        <td>${r.type}</td>
+        <td><span class="pill ${r.priority==='High'?'high':(r.priority==='Medium'?'med':'low')}">${r.priority}</span></td>
+        <td>${r.score.toFixed(1)}</td>
+        <td>${r.opp.toFixed(1)}</td>
+        <td>${r.mtype} <span class="hint">(${r.rec})</span></td>
+        <td>${r.keyword}${this.engine.seedSet.has(r.base)?' <span class="badge warn">Already Selected</span>':''}</td>
+        <td>${r.base}</td>
+        <td><span class="badge">${r.origin||'Core'}</span></td>
+        <td>${r.feedback}</td>
+        <td>${r.cluster||k}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('view-table').style.display='block';
+    document.getElementById('view-clusters').style.display='none';
+    document.querySelectorAll('.viewtab').forEach(x=>x.classList.remove('active'));
+    document.querySelector('.viewtab[data-view="table"]').classList.add('active');
+    this.toggleBaseColumn();
+  }
+
+  /* ---------- Copy / Export ---------- */
+  currentFilteredRows(){
+    const pf=val("priorityFilter"),tf=val("themeFilter");
+    const q=(val("search")||"").toLowerCase();
+    const chips=[...document.querySelectorAll('.chip.active')].map(x=>x.getAttribute('data-type'));
+    let view=this.rows.slice();
+    view=view.filter(r=>chips.includes(r.type));
+    if(pf) view=view.filter(r=>r.priority===pf);
+    if(tf) view=view.filter(r=>r.theme===tf);
+    if(q)  view=view.filter(r=>r.base.toLowerCase().includes(q)||r.keyword.toLowerCase().includes(q)||r.feedback.toLowerCase().includes(q));
+    return view;
+  }
+
+  copyKeywords(){
+    const view=this.currentFilteredRows();
+    copyToClipboard(view.map(r=>r.keyword).join("\n"));
+  }
+  copyBase(){
+    const view=this.currentFilteredRows();
+    copyToClipboard(Array.from(new Set(view.map(r=>r.base))).join("\n"));
+  }
+  exportJSON(){
+    const view=this.currentFilteredRows();
+    copyToClipboard(JSON.stringify(view,null,2));
+  }
+
+  copyEditorTSV(){
+    // take top set
+    const all=this.currentFilteredRows();
+    // Aggregate headlines and descriptions via top bases
+    const topBases=this.ad.topBases(all,6);
+    const H=this.ad.makeHeads(val('topic_override')||val('title')||'', val('brand')||'PragerU', topBases);
+    const D=this.ad.makeDescs(val('topic_override')||val('title')||'', val('brand')||'PragerU', topBases);
+
+    const campaign=(val('show').trim()||val('brand').trim()||'PragerU')+" – Search";
+    const adgroup=(topBases[0]||val('topic_override')||val('title')||'Core');
+    const path1=(topBases[0]||'learn').split(' ').slice(0,2).join('-').toLowerCase();
+    const path2=(val('show').trim()||'prageru').split(' ').slice(0,2).join('-').toLowerCase();
+    const url='https://www.prageru.com';
+    const headers=['Campaign','Ad Group',...Array.from({length:15},(_,i)=>`Headline ${i+1}`),...Array.from({length:4},(_,i)=>`Description ${i+1}`),'Path 1','Path 2','Final URL'];
+    const row=[campaign,adgroup,...Array.from({length:15},(_,i)=>H[i]||''),...Array.from({length:4},(_,i)=>D[i]||''),path1,path2,url];
+    const tsv=headers.join('\t')+'\n'+row.join('\t');
+    copyToClipboard(tsv);
+  }
+
+  /* ---------- Ad copy ---------- */
+  openCopy(){
+    const all=this.currentFilteredRows();
+    const bases=this.ad.topBases(all,8);
+    const topic=val("topic_override")||val("title")||"Topic";
+    const brand=val("brand")||"PragerU";
+    const H=this.ad.makeHeads(topic,brand,bases);
+    const D=this.ad.makeDescs(topic,brand,bases);
+
+    document.getElementById('pane-heads').innerHTML=H.map(h=>this.assetInput(h,30)).join("");
+    document.getElementById('pane-descs').innerHTML=D.map(d=>this.assetInput(d,90)).join("");
+    document.getElementById('adSidebar').classList.add('open');
+
+    document.getElementById('copyAssets').onclick=()=>{
+      const heads=[...document.querySelectorAll('#pane-heads input')].map(i=>i.value);
+      const descs=[...document.querySelectorAll('#pane-descs input')].map(i=>i.value);
+      const out=['HEADLINES:',...heads,'','DESCRIPTIONS:',...descs].join('\n');
+      copyToClipboard(out);
+    }
+  }
+
+  assetInput(txt,max){
+    const n=txt.length; const over=n>max?' badge err':' badge';
+    return `<div class="asset" style="display:flex;gap:8px;align-items:center;padding:6px 0">
+      <input value="${txt}" maxlength="${max}" style="flex:1;background:#0d131c;border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px 12px"/>
+      <span class="${over}">${n}/${max}</span>
+    </div>`
+  }
+
+  openAdCopyForCluster(k){
+    const bases=new Set(this.engine.clusters[k]||[]);
+    const rows=this.rows.filter(r=>bases.has(r.base));
+    const tops=this.ad.topBases(rows,6);
+    const topic=val("topic_override")||val("title")||"Topic";
+    const brand=val("brand")||"PragerU";
+    const H=this.ad.makeHeads(topic,brand,tops);
+    const D=this.ad.makeDescs(topic,brand,tops);
+
+    document.getElementById('pane-heads').innerHTML=H.map(h=>this.assetInput(h,30)).join("");
+    document.getElementById('pane-descs').innerHTML=D.map(d=>this.assetInput(d,90)).join("");
+    document.getElementById('adSidebar').classList.add('open');
+  }
+}
+
+/* ========================== HELPERS ========================== */
+function val(id){return document.getElementById(id).value}
+function setval(id,v){document.getElementById(id).value=v}
+
+/* ========================== INIT ========================== */
+const UI=new UIController();
+</script>
 </body>
 </html>
