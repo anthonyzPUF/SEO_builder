@@ -1,125 +1,202 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>SEO_builder</title><style>:root{--bg:#0b0f14;--panel:#121822;--muted:#8aa0bf;--text:#e6edf3;--accent:#F15A22;--line:#1f2835;--ok:#48d597;--warn:#ffd166;--err:#ff7b92}*{box-sizing:border-box}body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}header{padding:24px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f1520,#0b0f14)}h1{margin:0 0 4px 0;font-size:22px;font-weight:800;letter-spacing:.2px}h1 .brand{color:var(--accent)}.sub{color:var(--muted);font-size:12px}main{padding:20px;display:grid;grid-template-columns:330px 1fr;gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 20px rgba(0,0,0,.2)}.card h2{font-size:14px;margin:0 0 12px 0;color:var(--accent);letter-spacing:.2px}label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px 2px}input[type=text],textarea,select{width:100%;background:#0d131c;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;outline:none}textarea{min-height:76px;resize:vertical}.row{display:flex;gap:8px}.row>div{flex:1}.btn{appearance:none;background:#1a2436;color:var(--text);border:1px solid var(--line);padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;font-size:13px;letter-spacing:.2px;transition:transform .06s ease,opacity .2s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--accent);border-color:#a63a13}.btn.primary:hover{background:#d94e1e}.btn:disabled{opacity:.55;cursor:not-allowed}.btn.ghost{background:transparent}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.grid{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px}th{position:sticky;top:0;background:#0f1622;text-align:left;cursor:pointer}.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:#e9eef6}.pill.high{color:#102d1f;background:#2ef39722;border-color:#255a3e}.pill.med{color:#322815;background:#ffd16622;border-color:#7a5f22}.pill.low{color:#311a1d;background:#ff9fb022;border-color:#6b3a4a}.hint{font-size:11px;color:var(--muted)}.footer{margin-top:10px;color:var(--muted);font-size:12px;text-align:center}.spacer{height:8px}.footerbar{padding:12px 16px;text-align:center;border-top:1px solid var(--line);background:#0f1520;position:sticky;bottom:0}.footerbar a{color:var(--accent);text-decoration:none}
-/* Chips */
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);padding:6px 10px;border-radius:999px;font-size:12px;cursor:pointer;background:#0f1622}
-.chip.active{background:var(--accent);border-color:#a63a13;color:#fff}
-/* Sidebar */
-.sidebar{position:fixed;top:0;right:-42vw;width:42vw;max-width:680px;height:100vh;background:#0f1520;border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.35);transition:right .28s ease;z-index:50;display:flex;flex-direction:column}
-.sidebar.open{right:0}
-.sidebar header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);background:#0f1520}
-.sidebar h3{margin:0;font-size:16px;color:var(--accent)}
-.closex{background:transparent;border:0;color:#cdd7e5;font-size:18px;cursor:pointer}
-.tabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--line)}
-.tab{padding:8px 10px;border:1px solid var(--line);border-bottom:0;border-top-left-radius:10px;border-top-right-radius:10px;background:#121826;color:#cdd7e5;cursor:pointer}
-.tab.active{background:#1a2436;color:#fff}
-.tabpanes{flex:1;overflow:auto;background:#1a2436;border-top:1px solid var(--line)}
-.pane{display:none;padding:12px}
-.pane.active{display:block}
-.asset{display:flex;gap:8px;align-items:center;padding:6px 0}
-.asset input{flex:1;background:#0d131c;border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px 12px}
-.meta{display:flex;gap:8px;align-items:center;min-width:160px}
-.badge{font-size:11px;border:1px solid var(--line);padding:2px 6px;border-radius:8px;color:#c9d4e2}
-.badge.red{border-color:#6b2130;color:#ff7b92;background:#2a1218}
-select.pin{background:#0d131c;border:1px solid var(--line);color:#e6edf3;border-radius:10px;padding:8px 10px}
-/* Second-level nav */
-.viewtabs{display:flex;gap:6px;margin:8px 0}
-.viewtab{padding:6px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#0f1622}
-.viewtab.active{background:var(--accent);border-color:#a63a13;color:#fff}
-.cluster{background:#0f1622;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
-.cluster h4{margin:0 0 6px 0;font-size:13px;color:#cdd7e5}
-.cluster small{color:#8aa0bf}
-/* Progress */
-.progress-wrap{margin:10px 0}
-.progress-bar{height:10px;border-radius:999px;background:#131c29;border:1px solid var(--line);overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,#F15A22,#ff904d);width:0%}
-.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
-.step{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:#0f1622;font-size:12px}
-.step .dot{width:10px;height:10px;border-radius:50%;background:#5b6b83}
-.step.ok .dot{background:var(--ok)}
-.step.fail .dot{background:var(--err)}
-.step.pending .dot{background:#ffd166}
-</style></head><body><header><h1><span class="brand">PragerU</span> SEO_builder</h1><div class="sub">Streaming multi-source keyword engine: core, long-tails, related, questions, entities, discussions, trends, news, books + Ad Copy sidebar.</div></header><main><section class="card" id="inputs"><h2>Inputs</h2><label>Title</label><input type="text" id="title" placeholder="e.g., Cash Course: Student Loans 101"/><label>Description</label><textarea id="description" placeholder="Short description…"></textarea><div class="row"><div><label>Show</label><input type="text" id="show" placeholder="e.g., Cash Course"/></div><div><label>Host</label><input type="text" id="host" placeholder="(optional) e.g., Sabrina Cardone"/></div></div><div class="row"><div><label>Brand</label><input type="text" id="brand" value="PragerU Kids"/></div><div><label>Brand Variant</label><input type="text" id="brand_variant" value="PragerU"/></div></div><label>Topic Override (optional)</label><input type="text" id="topic_override" placeholder="e.g., student loans"/><div class="row"><div><label>Include educational intent?</label><select id="inc_edu"><option value="true" selected>Yes</option><option value="false">No</option></select></div><div><label>Include commercial intent?</label><select id="inc_comm"><option value="false" selected>No</option><option value="true">Yes</option></select></div></div><div class="spacer"></div><div class="toolbar"><button class="btn primary" id="generate">Generate</button><button class="btn" id="openCopy" disabled>Generate Ad Copy</button><button class="btn ghost" id="reset">Reset</button><span class="hint">Streaming on. Wikipedia & other signals auto-fetch.</span></div></section><section class="card"><h2>Output</h2><div class="toolbar" style="margin-bottom:10px"><div class="chips"><div class="chip active" data-type="Core">Core</div><div class="chip active" data-type="LongTail">Long‑Tail</div><div class="chip active" data-type="Related">Related</div><div class="chip active" data-type="Question">Questions</div><div class="chip active" data-type="Entity">Entities</div><div class="chip active" data-type="Discussion">Discussions</div><div class="chip active" data-type="Trend">Trends</div><div class="chip active" data-type="News">News</div><div class="chip active" data-type="Book">Books</div></div><input type="text" id="search" placeholder="Filter…" style="background:#0d131c;border:1px solid var(--line);color:#e6edf3;border-radius:10px;padding:10px 12px;min-width:180px"><select id="priorityFilter" class="btn"><option value="">All priorities</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select><select id="themeFilter" class="btn"><option value="">All themes</option><option value="Brand / Show">Brand / Show</option><option value="Intent + Topic">Intent + Topic</option><option value="Pure Topic">Pure Topic</option></select><div style="flex:1"></div><button class="btn" id="copyKeywords">Copy Keywords</button><button class="btn" id="copyBase">Copy Base Terms</button><button class="btn" id="copyNegs">Copy Negatives</button></div><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="pfill"></div></div><div class="steps" id="psteps"></div></div><div id="view-table" class="grid"><table id="tbl"><thead><tr><th data-k="theme">Theme</th><th data-k="type">Type</th><th data-k="priority">Priority</th><th data-k="score">Relevance</th><th data-k="opp">Opp.</th><th data-k="mtype">Match</th><th data-k="keyword">Keyword</th><th data-k="base">Base Term</th><th data-k="origin">Origin</th><th data-k="wiki">Wiki PV</th><th data-k="cluster">Cluster</th></tr></thead><tbody></tbody></table></div><div class="viewtabs"><div class="viewtab active" data-view="table">Table</div><div class="viewtab" data-view="clusters">Clusters</div><div class="viewtab" data-view="feeds">Feeds</div></div><div id="view-clusters" style="display:none"></div><div id="view-feeds" style="display:none"></div><div class="footer" id="footerNote">No results yet.</div></section></main><div class="footerbar"><a href="https://www.prageru.com" target="_blank" rel="noopener noreferrer">Created by the PragerU Paid Media Team</a></div>
-<div class="sidebar" id="adSidebar"><header><h3>Ad Copy – Responsive Search Ads</h3><button class="closex" id="closeSidebar">✕</button></header><div class="tabs"><div class="tab active" data-pane="heads">Headlines</div><div class="tab" data-pane="descs">Descriptions</div></div><div class="tabpanes"><div class="pane active" id="pane-heads"></div><div class="pane" id="pane-descs"></div></div><div class="footer"><button class="btn" id="copyAssets">Copy All Assets</button><button class="btn" id="copyEditor">Copy Editor TSV</button></div></div>
-<script>const CONFIG={PROXIES:{trends:"/api/trends",reddit:"/api/reddit",news:"/api/news"}};const STOPWORDS=new Set("a an and are as at be by for from has have how i in into is it its just learn more new of on or our out quick step steps the their them they this to up video videos watch what when where which who why with your".split(" "));const INTENT_CORE=["watch","video","videos","free","online","explained","definition","guide","how to","course","class","lesson","for kids","for parents","101","basics","beginner","intro","tips","examples","pros and cons"];const COMMERCIAL_INTENT=["best","top","compare","comparison","reviews","near me","cost","price","affordable","cheap","premium"];const EDU_INTENT=["curriculum","worksheet","worksheets","printable","pdf","lesson plan","quiz","activities","activity","questions"];const DEFAULT_NEGATIVES=["torrent","lyrics","mp3","tiktok","reddit","discord","minecraft","fortnite","roblox","game","free download","pirated","streaming site","porn","nsfw","nsfw content","hack","cheat code"];function norm(s){return(s||"").normalize("NFKC").replace(/[–—]/g,"-").trim()}function toks(s){s=norm(s.toLowerCase());const m=s.match(/[a-z0-9']+/g)||[];return m.filter(t=>!STOPWORDS.has(t)&&!/^[0-9]+$/.test(t))}function ngrams(a,n){const o=[];for(let i=0;i<=a.length-n;i++)o.push(a.slice(i,i+n).join(" "));return o}function unique(a){const s=new Set();const o=[];for(const x of a){if(!s.has(x)){s.add(x);o.push(x)}}return o}
-function extractTopics(inp){const tt=toks(inp.title),dt=toks(inp.description),st=toks(inp.show);const counts={};[...tt,...dt].forEach(w=>counts[w]=(counts[w]||0)+1);const common=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,30).map(x=>x[0]);const boosted=unique([...st,...common]);let topicPhrases=[];if(inp.topic_override)topicPhrases.push(norm(inp.topic_override.toLowerCase()));topicPhrases=unique([...boosted.filter(w=>w.length>2),...ngrams(tt,2),...ngrams(tt,3),...topicPhrases]).slice(0,40);return{core_terms:unique([...tt,...st]),topic_phrases:topicPhrases}}
-function buildKeywordPhrases(inp,parts){const brand=unique([inp.brand,inp.brand_variant,inp.show,inp.host].map(x=>norm(String(x||"").toLowerCase())).filter(Boolean));let intents=[...INTENT_CORE];if(inp.include_commercial_intent)intents=intents.concat(COMMERCIAL_INTENT);if(inp.include_edu_intent)intents=intents.concat(EDU_INTENT);const cand=[];const topics=parts.topic_phrases.length?parts.topic_phrases:parts.core_terms;function combos(l,r){const o=[];for(const a of l){for(const b of r){o.push(`${a} ${b}`,`${b} ${a}`)}}return o}cand.push(...unique(topics));cand.push(...unique(combos(topics,intents)));if(brand.length){cand.push(...unique(combos(topics,brand)));cand.push(...unique(combos(brand,intents)))}const clean=unique(cand.map(c=>c.replace(/\s+/g," ").trim()).filter(c=>c.length>=2&&c.length<=60));return{brand_terms:brand,keywords:clean}}
-function relevanceScore(kw,inp){const k=kw.toLowerCase();const tt=new Set(toks(inp.title)),dt=new Set(toks(inp.description)),st=new Set(toks(inp.show));let s=0;for(const t of tt)if(k.includes(t))s+=12;for(const t of dt)if(k.includes(t))s+=4;for(const t of st)if(k.includes(t))s+=8;for(const i of INTENT_CORE)if(k.includes(i))s+=4;if(inp.include_edu_intent)for(const ei of EDU_INTENT)if(k.includes(ei))s+=3;if(inp.include_commercial_intent)for(const ci of COMMERCIAL_INTENT)if(k.includes(ci))s+=2;const n=k.split(/\s+/).length;if(2<=n&&n<=4)s+=5;else if(n===1)s-=1;else if(n>=7)s-=2;return Math.max(0,s)}
-function heuristicKD(base){const w=base.split(/\s+/).length;let kd=20+w*8;const generic=["best","top","guide","lesson","class","definition","explained","video","videos","free","online"];for(const g of generic)if(base.includes(g))kd+=6;const rare=base.replace(/[^a-z]/g,"").length>18;if(rare)kd-=10;if(base.length>=30)kd+=10;return Math.max(5,Math.min(95,Math.round(kd)))}
-function matchTypes(kw){return[["Broad",kw],["Phrase",`"${kw}"`],["Exact",`[${kw}]`]]}
-function themeForKeyword(k,brandTerms){k=k.toLowerCase();if(brandTerms.some(b=>k.includes(b)))return"Brand / Show";if(INTENT_CORE.some(i=>k.includes(i)))return"Intent + Topic";return"Pure Topic"}
-function priorityFromScore(s){return s>=28?"High":(s>=18?"Medium":"Low")}
-function recommendMatchType(s,theme){if(s>=35)return"Exact";if(s>=25)return"Phrase";return theme==="Brand / Show"?"Exact":"Broad"}
-let rows=[],negatives=[],currentSort={key:"opp",dir:"desc"},wikiAvgByTerm={},clusters={},feeds={trends:[],news:[],questions:[],discussions:[],entities:[],books:[]},baseSet=new Set(),originByBase=new Map(),typeByBase=new Map(),novByBase=new Map(),currentInp=null,isGenerating=false;
-function computeOpp(score,wiki,kd,nov){const pop=Math.log1p(Math.max(0,wiki||0));const popN=pop/Math.log1p(100000)||0;const diff=1-(kd/100);const nv=Math.min(1,Math.max(0,nov||0));return Math.round((score*(0.55+0.45*popN))*(Math.max(0.45,diff))*(0.9+0.2*nv)*10)/10}
-function render(){const pf=document.getElementById("priorityFilter").value;const tf=document.getElementById("themeFilter").value;const q=document.getElementById("search").value.toLowerCase();const chips=[...document.querySelectorAll('.chip.active')].map(x=>x.getAttribute('data-type'));const tbody=document.querySelector("#tbl tbody");tbody.innerHTML="";let view=rows.slice();view=view.filter(r=>chips.includes(r.type));if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);if(q)view=view.filter(r=>r.base.toLowerCase().includes(q)||r.keyword.toLowerCase().includes(q));view.sort((a,b)=>{const d=currentSort.dir==="asc"?1:-1;const k=currentSort.key;if(k==="score"||k==="opp")return(a[k]-b[k])*d;return String(a[k]).localeCompare(String(b[k]))*d});for(const r of view){const tr=document.createElement("tr");tr.innerHTML=`<td>${r.theme}</td><td>${r.type}</td><td><span class="pill ${r.priority==='High'?'high':(r.priority==='Medium'?'med':'low')}">${r.priority}</span></td><td>${r.score.toFixed(1)}</td><td>${r.opp.toFixed(1)}</td><td>${r.mtype} <span class="hint">(${r.rec})</span></td><td>${r.keyword}${novByBase.get(r.base)?' <span class="hint">⚡</span>':''}</td><td>${r.base}</td><td>${r.origin||'Core'}</td><td>${wikiAvgByTerm[r.base]!==undefined?Number(wikiAvgByTerm[r.base]).toFixed(0):'–'}</td><td>${r.cluster||'-'}</td>`;tbody.appendChild(tr)}document.getElementById("footerNote").textContent=view.length?`${view.length} rows (filtered)`:"No results yet."}
-function copyToClipboard(t){navigator.clipboard.writeText(t)}
-function val(id){return document.getElementById(id).value}
-function setval(id,v){document.getElementById(id).value=v}
-function buildLongTails(seeds){const who=["for kids","for teens","for parents","for teachers","for beginners","for homeschool"];const learn=["how to","what is","why","examples","tips","explained","101","basics","beginner","advanced"];const action=["learn","study","explain","understand","compare","avoid","improve"];const suffix=["worksheet","worksheets","lesson plan","quiz","activities","pdf"];const out=[];for(const s of seeds){for(const w of learn){out.push(`${w} ${s}`)}for(const aud of who){out.push(`${s} ${aud}`)}for(const act of action){out.push(`${act} ${s}`)}for(const sx of suffix){out.push(`${s} ${sx}`)}out.push(`${s} near me`,`${s} 2025`)}return unique(out)}
-function buildQuestionsTemplates(seeds){const out=[];for(const s of seeds){out.push(`what is ${s}`,`how to ${s}`,`why is ${s} important`,`can you ${s}`,`should i ${s}`,`when does ${s} start`,`where to learn ${s}`)}return unique(out)}
-async function datamuseAll(q){if(!q)return{ml:[],trg:[],jja:[],jjb:[]};const base=`https://api.datamuse.com/words?`;const us=[`${base}ml=${encodeURIComponent(q)}&max=40`,`${base}rel_trg=${encodeURIComponent(q)}&max=40`,`${base}rel_jja=${encodeURIComponent(q)}&max=30`,`${base}rel_jjb=${encodeURIComponent(q)}&max=30`];try{const rs=await Promise.all(us.map(u=>fetch(u).then(r=>r.ok?r.json():[]).catch(_=>[])));return{ml:(rs[0]||[]).map(x=>x.word),trg:(rs[1]||[]).map(x=>x.word),jja:(rs[2]||[]).map(x=>x.word),jjb:(rs[3]||[]).map(x=>x.word)} }catch(e){return{ml:[],trg:[],jja:[],jjb:[]}}}
-async function wikiEntities(seed){try{const u=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(seed)}&srlimit=1&format=json&origin=*`;const r=await fetch(u);if(!r.ok)return[];const j=await r.json();const title=j?.query?.search?.[0]?.title;if(!title)return[];const links=`https://en.wikipedia.org/w/api.php?action=query&prop=links&titles=${encodeURIComponent(title)}&pllimit=50&format=json&origin=*`;const rr=await fetch(links);if(!rr.ok)return[];const jj=await rr.json();const pages=jj?.query?.pages||{};const arr=Object.values(pages)[0]?.links||[];return arr.map(x=>x.title.toLowerCase()).filter(x=>x.length<40)}catch(e){return[]}}
-async function stackEx(seed){const sites=['money','academia','parenting','history'];const qs=[];await Promise.all(sites.map(async s=>{try{const u=`https://api.stackexchange.com/2.3/search/excerpts?order=desc&sort=relevance&q=${encodeURIComponent(seed)}&site=${s}`;const r=await fetch(u);if(!r.ok)return;const j=await r.json();(j.items||[]).forEach(it=>{if(it.title)qs.push(it.title.toLowerCase())})}catch(_){}}));return unique(qs)}
-async function duckRelated(seed){try{const u=`https://api.duckduckgo.com/?q=${encodeURIComponent(seed)}&format=json&no_redirect=1&no_html=1`;const r=await fetch(u);if(!r.ok)return[];const j=await r.json();const rel=(j.RelatedTopics||[]).flatMap(x=>x.Topics?x.Topics:x);return unique(rel.map(t=>t.Text?.toLowerCase?.()||'').filter(Boolean))}catch(e){return[]}}
-async function openLibrary(seed){try{const u=`https://openlibrary.org/search.json?q=${encodeURIComponent(seed)}`;const r=await fetch(u);if(!r.ok)return[];const j=await r.json();return unique((j.docs||[]).slice(0,30).map(d=>d.title).filter(Boolean).map(x=>x.toLowerCase()))}catch(e){return[]}}
-async function trends(seed){const url=CONFIG.PROXIES.trends;try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:seed})});if(!r.ok)return{score:0,queries:[]};return r.json()}catch(e){return{score:0,queries:[]}}}
-async function news(seed){const url=CONFIG.PROXIES.news;try{const r=await fetch(`${url}?q=${encodeURIComponent(seed)}`);if(!r.ok)return[];return r.json()}catch(e){return[]}}
-async function reddit(seed){const url=CONFIG.PROXIES.reddit;try{const r=await fetch(`${url}?q=${encodeURIComponent(seed)}`);if(!r.ok)return[];return r.json()}catch(e){return[]}}
-function makeClusters(bases){const freq={};const tokenized=bases.map(b=>({b,t:toks(b)}));for(const {t} of tokenized){for(const w of t){freq[w]=(freq[w]||0)+1}}const keys=new Set(Object.entries(freq).filter(([w,c])=>c>1&&!STOPWORDS.has(w)&&w.length>2).map(([w])=>w));const cl={};for(const {b,t} of tokenized){const hit=t.find(w=>keys.has(w))||t[0]||b.split(' ')[0];const k=hit||b;cl[k]=cl[k]||[];cl[k].push(b)}return cl}
-function assignClusters(){const bases=Array.from(baseSet);clusters=makeClusters(bases)}
-function renderClusters(){const box=document.getElementById('view-clusters');box.innerHTML='';const entries=Object.entries(clusters).sort((a,b)=>b[1].length-a[1].length);for(const [k,arr] of entries){const div=document.createElement('div');div.className='cluster';div.innerHTML=`<h4>${k} <small>(${arr.length})</small></h4><div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0">${arr.slice(0,10).map(x=>`<span class=\"chip\">${x}</span>`).join(' ')}</div><div style="display:flex;gap:8px"><button class="btn" data-act="view" data-k="${k}">View in table</button><button class="btn" data-act="copy" data-k="${k}">Generate Ad Copy</button></div>`;box.appendChild(div)}box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=b.getAttribute('data-k');if(b.getAttribute('data-act')==='view'){filterToCluster(k)}else{openAdCopyForCluster(k)}})}
-function filterToCluster(k){const bases=new Set(clusters[k]||[]);const tbody=document.querySelector('#tbl tbody');tbody.innerHTML='';rows.filter(r=>bases.has(r.base)).forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${r.theme}</td><td>${r.type}</td><td><span class="pill ${r.priority==='High'?'high':(r.priority==='Medium'?'med':'low')}">${r.priority}</span></td><td>${r.score.toFixed(1)}</td><td>${r.opp.toFixed(1)}</td><td>${r.mtype} <span class="hint">(${r.rec})</span></td><td>${r.keyword}${novByBase.get(r.base)?' <span class="hint">⚡</span>':''}</td><td>${r.base}</td><td>${r.origin||'Core'}</td><td>${wikiAvgByTerm[r.base]!==undefined?Number(wikiAvgByTerm[r.base]).toFixed(0):'–'}</td><td>${r.cluster||k}</td>`;tbody.appendChild(tr)});document.getElementById('view-table').style.display='block';document.getElementById('view-clusters').style.display='none';document.querySelectorAll('.viewtab').forEach(x=>x.classList.remove('active'));document.querySelector('.viewtab[data-view="table"]').classList.add('active')}
-function clusterKeyFor(base){for(const k in clusters){if(clusters[k].includes(base))return k}return''}
-function buildRowsForBases(bases,brandTerms){const temp=[];for(const base of bases){const score=relevanceScore(base,currentInp),priority=priorityFromScore(score),theme=themeForKeyword(base,brandTerms),rec=recommendMatchType(score,theme),kd=heuristicKD(base.toLowerCase()),nov=novByBase.get(base)||0;const type=typeByBase.get(base)||'Core';const cluster=clusterKeyFor(base);for(const [mtype,rendered] of matchTypes(base)){temp.push({theme,priority,score,opp:computeOpp(score,wikiAvgByTerm[base],kd,nov),mtype,keyword:rendered,base,rec,origin:originByBase.get(base)||'Core',type,cluster})}}rows=rows.concat(temp)}
-function addBatch(bases,origin,type,nov){const brandTerms=unique([currentInp.brand,currentInp.brand_variant,currentInp.show,currentInp.host].map(x=>String(x||'').toLowerCase()).filter(Boolean));const newBases=[];for(const b of bases){const v=b.toLowerCase().trim();if(v&&v.length<=60&&!baseSet.has(v)){baseSet.add(v);originByBase.set(v,origin);typeByBase.set(v,type);if(nov)novByBase.set(v,nov);newBases.push(v)}}if(!newBases.length)return;assignClusters();buildRowsForBases(newBases,brandTerms);render();renderClusters();scheduleWikiFetch(newBases)}
-async function fetchWikiAvgTerm(term){function yyyymmdd(d){const y=d.getUTCFullYear();const m=('0'+(d.getUTCMonth()+1)).slice(-2);const dd=('0'+d.getUTCDate()).slice(-2);return`${y}${m}${dd}`}async function wikiTitleFor(t){try{const u=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(t)}&srlimit=1&format=json&origin=*`;const r=await fetch(u);if(!r.ok)return null;const j=await r.json();return j?.query?.search?.[0]?.title||null}catch(_){return null}}async function wikiAvg(title){try{const end=new Date();const start=new Date(Date.now()-60*24*60*60*1000);const u=`https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/user/${encodeURIComponent(title)}/daily/${yyyymmdd(start)}/${yyyymmdd(end)}`;const r=await fetch(u);if(!r.ok)return 0;const j=await r.json();const arr=(j.items||[]).map(x=>x.views);if(!arr.length)return 0;return arr.reduce((a,b)=>a+b,0)/arr.length}catch(_){return 0}}if(wikiAvgByTerm[term]!==undefined)return;const title=await wikiTitleFor(term);const avg=title?await wikiAvg(title):0;wikiAvgByTerm[term]=avg;const kd=heuristicKD(term);for(const r of rows){if(r.base===term){r.opp=computeOpp(r.score,avg,kd,novByBase.get(term)||0)}}render()}
-function scheduleWikiFetch(bases){const list=bases.slice(0,20);Promise.all(list.map(b=>fetchWikiAvgTerm(b)))}
-/* Progress */
-const STEPS=[{k:'core',label:'Core'},{k:'longtail',label:'Long‑Tail'},{k:'datamuse',label:'Related'},{k:'entities',label:'Entities'},{k:'duck',label:'Related (DDG)'},{k:'books',label:'Books'},{k:'stackex',label:'Questions'},{k:'trends',label:'Trends'},{k:'news',label:'News'},{k:'reddit',label:'Reddit'}];let stepState={};function progressInit(){stepState={};const box=document.getElementById('psteps');box.innerHTML='';for(const s of STEPS){const div=document.createElement('div');div.className='step pending';div.dataset.k=s.k;div.innerHTML=`<div class="dot"></div><div>${s.label}</div>`;box.appendChild(div);stepState[s.k]='pending'}updateProgressFill()}function progressMark(k,status){stepState[k]=status;const el=document.querySelector(`.step[data-k="${k}"]`);if(el){el.classList.remove('pending','ok','fail');el.classList.add(status==='ok'?'ok':(status==='fail'?'fail':'pending'))}updateProgressFill()}function updateProgressFill(){const total=STEPS.length;const done=Object.values(stepState).filter(v=>v==='ok'||v==='fail').length;const pct=Math.round((done/total)*100);document.getElementById('pfill').style.width=pct+'%'}
-/* Generate (Streaming) */
-async function generate(){if(isGenerating)return;isGenerating=true;document.getElementById('generate').disabled=true;document.getElementById('openCopy').disabled=true;rows=[];baseSet.clear();originByBase.clear();typeByBase.clear();novByBase.clear();wikiAvgByTerm={};clusters={};feeds={trends:[],news:[],questions:[],discussions:[],entities:[],books:[]};render();renderClusters();document.getElementById('view-feeds').innerHTML='';progressInit();currentInp={title:val('title'),description:val('description'),show:val('show'),host:val('host'),brand:val('brand'),brand_variant:val('brand_variant'),topic_override:val('topic_override'),include_edu_intent:val('inc_edu')==='true',include_commercial_intent:val('inc_comm')==='true'};const parts=extractTopics(currentInp);const built=buildKeywordPhrases(currentInp,parts);const seeds=parts.topic_phrases.length?parts.topic_phrases:parts.core_terms;addBatch(built.keywords,'Core','Core',0);progressMark('core','ok');addBatch(buildLongTails(seeds),'Templates','LongTail',0.1);progressMark('longtail','ok');const seedQ=currentInp.topic_override||seeds[0]||currentInp.title||currentInp.show||currentInp.brand||'';datamuseAll(seedQ).then(dm=>{const related=unique([...(dm.ml||[]),...(dm.trg||[]),...(dm.jja||[]),...(dm.jjb||[])]).map(x=>String(x).toLowerCase()).filter(x=>x.length<60);addBatch(related,'Datamuse','Related',0.15);feeds.related=related.slice(0,60);progressMark('datamuse','ok')}).catch(_=>progressMark('datamuse','fail'));
-wikiEntities(seedQ).then(ents=>{const entities=unique((ents||[]).slice(0,80));addBatch(entities,'Wikidata','Entity',0.2);feeds.entities=entities.slice(0,50);progressMark('entities','ok');renderFeeds()}).catch(_=>progressMark('entities','fail'));
-duckRelated(seedQ).then(rel=>{const ddg=unique(rel||[]).slice(0,80);addBatch(ddg,'DuckDuckGo','Related',0.15);progressMark('duck','ok')}).catch(_=>progressMark('duck','fail'));
-openLibrary(seedQ).then(bks=>{const books=unique((bks||[]).slice(0,60));addBatch(books,'OpenLibrary','Book',0.05);feeds.books=books.slice(0,50);progressMark('books','ok');renderFeeds()}).catch(_=>progressMark('books','fail'));
-stackEx(seedQ).then(qs=>{const questions=unique([...qs,...buildQuestionsTemplates(seeds)]).slice(0,120);addBatch(questions,'StackEx/Templates','Question',0.4);feeds.questions=questions.slice(0,60);progressMark('stackex','ok');renderFeeds()}).catch(_=>progressMark('stackex','fail'));
-trends(seedQ).then(tr=>{const trendQueries=unique(((tr?.queries)||[]).map(x=>String(x).toLowerCase())).slice(0,60);if(trendQueries.length){addBatch(trendQueries,'Trends','Trend',0.6);feeds.trends=trendQueries.slice(0,50);progressMark('trends','ok');renderFeeds()}else{progressMark('trends','fail')}}).catch(_=>progressMark('trends','fail'));
-news(seedQ).then(ns=>{const newsKeys=unique((ns||[]).map(x=>String(x).toLowerCase())).slice(0,80);if(newsKeys.length){addBatch(newsKeys,'News','News',0.9);feeds.news=newsKeys.slice(0,50);progressMark('news','ok');renderFeeds()}else{progressMark('news','fail')}}).catch(_=>progressMark('news','fail'));
-reddit(seedQ).then(rd=>{const discussions=unique((rd||[]).map(x=>String(x).toLowerCase())).slice(0,120);if(discussions.length){addBatch(discussions,'Reddit','Discussion',0.5);feeds.discussions=discussions.slice(0,50);progressMark('reddit','ok');renderFeeds()}else{progressMark('reddit','fail')}}).catch(_=>progressMark('reddit','fail'));
-setTimeout(()=>{document.getElementById('generate').disabled=false;document.getElementById('openCopy').disabled=false;isGenerating=false},7000)}
-function renderFeeds(){const box=document.getElementById('view-feeds');const sec=(title,items)=>`<div class="card" style="margin-bottom:10px"><h2>${title}</h2><div style="display:flex;gap:6px;flex-wrap:wrap">${(items||[]).slice(0,60).map(x=>`<span class=\"chip\">${x}</span>`).join(' ')}</div></div>`;box.innerHTML=sec('Trends',feeds.trends)+sec('News',feeds.news)+sec('Questions',feeds.questions)+sec('Discussions',feeds.discussions)+sec('Entities',feeds.entities)+sec('Books',feeds.books)}
-/* UI Bindings */
-document.getElementById("copyKeywords").onclick=()=>{const pf=val("priorityFilter"),tf=val("themeFilter");const chips=[...document.querySelectorAll('.chip.active')].map(x=>x.getAttribute('data-type'));let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);view=view.filter(r=>chips.includes(r.type));copyToClipboard(view.map(r=>r.keyword).join("\n"))}
-document.getElementById("copyBase").onclick=()=>{const pf=val("priorityFilter"),tf=val("themeFilter");const chips=[...document.querySelectorAll('.chip.active')].map(x=>x.getAttribute('data-type'));let view=rows.slice();if(pf)view=view.filter(r=>r.priority===pf);if(tf)view=view.filter(r=>r.theme===tf);view=view.filter(r=>chips.includes(r.type));copyToClipboard(Array.from(new Set(view.map(r=>r.base))).join("\n"))}
-document.getElementById("copyNegs").onclick=()=>copyToClipboard(negatives.join("\n"))
-document.getElementById("reset").onclick=()=>{["title","description","show","host","brand","brand_variant","topic_override","search"].forEach(id=>setval(id,""));rows=[];wikiAvgByTerm={};clusters={};feeds={trends:[],news:[],questions:[],discussions:[],entities:[],books:[]};baseSet.clear();originByBase.clear();typeByBase.clear();novByBase.clear();render();renderClusters();document.getElementById('view-feeds').innerHTML='';document.getElementById('openCopy').disabled=true}
-;document.getElementById("generate").onclick=generate
-;document.querySelectorAll("th").forEach(th=>th.addEventListener("click",()=>{const key=th.getAttribute("data-k");if(currentSort.key===key){currentSort.dir=currentSort.dir==="asc"?"desc":"asc"}else{currentSort.key=key;currentSort.dir=(key==="opp"||key==="score")?"desc":"asc"}render()}));document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{c.classList.toggle('active');render()});document.getElementById('search').oninput=()=>render();document.querySelectorAll('.viewtab').forEach(v=>v.onclick=()=>{document.querySelectorAll('.viewtab').forEach(x=>x.classList.remove('active'));v.classList.add('active');const view=v.getAttribute('data-view');document.getElementById('view-table').style.display=(view==='table')?'block':'none';document.getElementById('view-clusters').style.display=(view==='clusters')?'block':'none';document.getElementById('view-feeds').style.display=(view==='feeds')?'block':'none'})
-/* Ad Copy Sidebar */
-const sidebar=document.getElementById('adSidebar');const openBtn=document.getElementById('openCopy');const closeBtn=document.getElementById('closeSidebar');const tabs=document.querySelectorAll('.tab');const panes={heads:document.getElementById('pane-heads'),descs:document.getElementById('pane-descs')};openBtn.onclick=()=>{buildAdCopy();sidebar.classList.add('open')};closeBtn.onclick=()=>sidebar.classList.remove('open');tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById('pane-'+t.dataset.pane).classList.add('active')});
-function topBases(n,scope){const m=new Map();for(const r of rows){if(!scope||scope.has(r.base))m.set(r.base,Math.max(m.get(r.base)||0,r.opp))}return Array.from(m.entries()).sort((a,b)=>b[1]-a[1]).slice(0,n).map(x=>x[0])}
-function clampLen(s,max){if(s.length<=max)return s;return s.slice(0,max)}
-function uniqArr(arr){const s=new Set(),o=[];for(const a of arr){const k=a.toLowerCase();if(!s.has(k)){s.add(k);o.push(a)}}return o}
-function nonempty(arr){return arr.filter(x=>x&&x.trim())}
-function makeHeadlines(scope){const show=val('show').trim();const brand=val('brand').trim()||'PragerU';const topic=val('topic_override').trim()||val('title').trim();const bases=topBases(6,scope);const kw1=bases[0]||topic||'';const kw2=bases[1]||'';let H=[];if(show){H=H.concat([`${show}`,`${show}: ${kw1}`.trim(),`${kw1} | ${show}`.trim(),`${show} ${kw2}`.trim()])}else{H=H.concat([`${brand}`,`${brand} ${kw1}`.trim()])}H=H.concat([`${kw1} 101`,`${kw1} Explained`,`${kw1} Basics`,`${kw1} Guide`,`${kw1} for Kids`.trim(),`${kw1} for Parents`.trim()]);H=H.concat([`Watch Free Now`,`Join Free Today`,`Start Learning Today`]);H=uniqArr(H).map(x=>clampLen(x,30));H=nonempty(H).slice(0,15);while(H.length<15){H.push(clampLen((show||brand),30))}return H}
-function makeDescriptions(scope){const show=val('show').trim();const brand=val('brand').trim()||'PragerU';const title=val('title').trim();const bases=topBases(3,scope);const kw=bases[0]||title||'';let D=[];if(show){D.push(`${show} explains ${kw} in plain English. Watch free on ${brand}.`);D.push(`Learn ${kw} with ${show}. Trusted, free videos on ${brand}.`)}else{D.push(`Learn ${kw} with ${brand}. Free educational videos.`)}D.push(`Join millions learning with ${brand}. Watch free now.`);D.push(`Short, clear lessons. Start today on ${brand}.`);D=uniqArr(D).map(x=>clampLen(x,90));D=nonempty(D).slice(0,4);while(D.length<4){D.push(clampLen(`Watch free on ${brand}.`,90))}return D}
-function renderAssets(list,container,max,kind){container.innerHTML='';list.forEach((txt)=>{const wrap=document.createElement('div');wrap.className='asset';const input=document.createElement('input');input.value=txt;input.maxLength=max;const meta=document.createElement('div');meta.className='meta';const badge=document.createElement('span');badge.className='badge';badge.textContent=`${input.value.length}/${max}`;const pin=document.createElement('select');pin.className='pin';pin.innerHTML=kind==='H'?'<option value="">Pin</option><option value="H1">H1</option><option value="H2">H2</option>':'<option value="">Pin</option><option value="D1">D1</option>';input.oninput=()=>{badge.textContent=`${input.value.length}/${max}`;badge.className='badge'+(input.value.length>max?' red':'')};wrap.appendChild(input);meta.appendChild(badge);meta.appendChild(pin);wrap.appendChild(meta);container.appendChild(wrap)})}
-function buildAdCopy(scopeBases){const scope=scopeBases?new Set(scopeBases):null;const H=makeHeadlines(scope);const D=makeDescriptions(scope);renderAssets(H,panes.heads,30,'H');renderAssets(D,panes.descs,90,'D')}
-function collectAssets(){const H=[...panes.heads.querySelectorAll('input')].map(i=>i.value).slice(0,15);const D=[...panes.descs.querySelectorAll('input')].map(i=>i.value).slice(0,4);return{H,D}}
-document.getElementById('copyAssets').onclick=()=>{const {H,D}=collectAssets();const out=['HEADLINES:',...H,'','DESCRIPTIONS:',...D].join('\n');copyToClipboard(out)}
-document.getElementById('copyEditor').onclick=()=>{const {H,D}=collectAssets();const campaign=(val('show').trim()||val('brand').trim()||'PragerU')+" – Search";const adgroup=(topBases(1)[0]||val('topic_override')||val('title')||'Core');const path1=(topBases(1)[0]||'learn').split(' ').slice(0,2).join('-').toLowerCase();const path2=(val('show').trim()||'prageru').split(' ').slice(0,2).join('-').toLowerCase();const url='https://www.prageru.com';const headers=['Campaign','Ad Group',...Array.from({length:15},(_,i)=>`Headline ${i+1}`),...Array.from({length:4},(_,i)=>`Description ${i+1}`),'Path 1','Path 2','Final URL'];const row=[campaign,adgroup,...Array.from({length:15},(_,i)=>H[i]||''),...Array.from({length:4},(_,i)=>D[i]||''),path1,path2,url];const tsv=headers.join('\t')+'\n'+row.join('\t');copyToClipboard(tsv)}
-function openAdCopyForCluster(k){const bases=new Set(clusters[k]||[]);buildAdCopy(bases);document.getElementById('adSidebar').classList.add('open')}
-/* Defaults */
-document.getElementById("title").value="Cash Course: Student Loans 101";document.getElementById("description").value="A friendly intro to student loans for teens and parents: how they work, interest, repayment, and pitfalls to avoid.";document.getElementById("show").value="Cash Course";document.getElementById("brand").value="PragerU Kids";document.getElementById("brand_variant").value="PragerU";document.getElementById("topic_override").value="student loans";
-</script><div id="hb" style="position:fixed;left:10px;bottom:10px;background:#152033;border:1px solid #1f2835;color:#e6edf3;padding:6px 10px;border-radius:10px;font:12px ui-sans-serif;z-index:9999">JS: loading…</div>
-<script>
-(function(){
-  const el = document.getElementById('hb');
-  function ok(t){ el.textContent=t; el.style.background='#133526'; el.style.borderColor='#1f4d3a'; }
-  function err(t){ el.textContent=t; el.style.background='#2a1218'; el.style.borderColor='#6b2130'; }
-  ok('JS: loaded ✓');
-  const g=document.getElementById('generate'); if(g){ g.addEventListener('click',()=>ok('Generate clicked ✓')); }
-  window.onerror=function(msg,src,lin,col){ err('Error: '+String(msg).slice(0,80)); };
-  window.addEventListener('unhandledrejection',e=>{ err('Promise error'); });
-})();
-</script>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SEO_builder Pro</title>
+  <style>
+    /* --- Same styles as before --- */
+    body{margin:0;font-family:ui-sans-serif;background:#0b0f14;color:#e6edf3}
+    header{padding:20px;background:#0f1520;border-bottom:1px solid #1f2835}
+    h1{margin:0;font-size:22px;font-weight:800;color:#F15A22}
+    main{padding:20px;display:grid;grid-template-columns:330px 1fr;gap:16px}
+    .card{background:#121822;border:1px solid #1f2835;border-radius:14px;padding:14px}
+    .btn{background:#1a2436;border:1px solid #1f2835;border-radius:10px;padding:10px;color:#e6edf3;cursor:pointer}
+    .btn.primary{background:#F15A22;border-color:#a63a13}
+    .btn.primary:hover{background:#d94e1e}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:8px;border-bottom:1px solid #1f2835;font-size:13px}
+    th{color:#F15A22;text-align:left}
+    .pill{padding:2px 6px;border-radius:6px;font-size:11px}
+    .pill.high{background:#2ef39722;color:#48d597}
+    .pill.med{background:#ffd16622;color:#ffd166}
+    .pill.low{background:#ff9fb022;color:#ff7b92}
+    .sidebar{position:fixed;top:0;right:-40vw;width:40vw;height:100vh;background:#0f1520;border-left:1px solid #1f2835;transition:right .3s}
+    .sidebar.open{right:0}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PragerU SEO Builder Pro</h1>
+    <div>Multi-feed keyword engine + Ad Copy Generator</div>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Inputs</h2>
+      <label>Title</label><input id="title" type="text" placeholder="Cash Course: Student Loans 101"/>
+      <label>Description</label><textarea id="description"></textarea>
+      <label>Show</label><input id="show" type="text" placeholder="Cash Course"/>
+      <label>Brand</label><input id="brand" type="text" value="PragerU Kids"/>
+      <label>Topic Override</label><input id="topic_override" type="text"/>
+      <div style="margin-top:10px">
+        <button class="btn primary" id="generate">Generate</button>
+        <button class="btn" id="openCopy" disabled>Generate Ad Copy</button>
+        <button class="btn" id="reset">Reset</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Keyword Output</h2>
+      <div id="outputArea">No results yet.</div>
+    </section>
+  </main>
+
+  <!-- Ad Copy Sidebar -->
+  <div class="sidebar" id="adSidebar">
+    <h2 style="padding:12px;color:#F15A22">Ad Copy</h2>
+    <div id="pane-heads" style="padding:10px"></div>
+    <div id="pane-descs" style="padding:10px"></div>
+    <button class="btn" id="closeSidebar" style="margin:10px">Close</button>
+  </div>
+
+  <script>
+    /* ---------- Utilities ---------- */
+    const STOPWORDS=new Set("a an and are as at be by for from has have how i in into is it its just more new of on or our out the their them they this to up what when where which who why with your".split(" "));
+    function norm(s){return(s||"").normalize("NFKC").replace(/[–—]/g,"-").trim()}
+    function toks(s){s=norm(s.toLowerCase());const m=s.match(/[a-z0-9']+/g)||[];return m.filter(t=>!STOPWORDS.has(t))}
+    function unique(a){return[...new Set(a)]}
+    async function safeFetch(url,opts={},timeout=8000){
+      const controller=new AbortController();const id=setTimeout(()=>controller.abort(),timeout);
+      try{const r=await fetch(url,{...opts,signal:controller.signal});return r.ok?await r.json():null;}
+      catch(e){return null}finally{clearTimeout(id)}
+    }
+
+    /* ---------- Keyword Engine ---------- */
+    class KeywordEngine {
+      constructor(){this.rows=[]}
+      reset(){this.rows=[]}
+
+      extractTopics(inp){
+        const tt=toks(inp.title),dt=toks(inp.description),st=toks(inp.show);
+        const all=[...tt,...dt];const counts={};all.forEach(w=>counts[w]=(counts[w]||0)+1);
+        const common=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,20).map(x=>x[0]);
+        return{core_terms:unique([...tt,...st]),topic_phrases:unique([...common,...st])}
+      }
+
+      async fetchFeeds(seed){
+        const results={}
+        results.datamuse=await this.datamuse(seed)
+        results.wiki=await this.wikiEntities(seed)
+        results.ddg=await this.duckRelated(seed)
+        results.books=await this.openLibrary(seed)
+        results.stack=await this.stackEx(seed)
+        return results
+      }
+
+      async datamuse(q){
+        const u=`https://api.datamuse.com/words?ml=${encodeURIComponent(q)}&max=20`
+        const j=await safeFetch(u);return j?(j.map(x=>x.word)):[]
+      }
+      async wikiEntities(seed){
+        const u=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(seed)}&srlimit=5&format=json&origin=*`
+        const j=await safeFetch(u);return j?.query?.search?.map(x=>x.title.toLowerCase())||[]
+      }
+      async duckRelated(seed){
+        const u=`https://api.duckduckgo.com/?q=${encodeURIComponent(seed)}&format=json&no_html=1`
+        const j=await safeFetch(u);return j?(j.RelatedTopics||[]).map(x=>x.Text).filter(Boolean):[]
+      }
+      async openLibrary(seed){
+        const u=`https://openlibrary.org/search.json?q=${encodeURIComponent(seed)}`
+        const j=await safeFetch(u);return j?(j.docs||[]).slice(0,10).map(d=>d.title.toLowerCase()):[]
+      }
+      async stackEx(seed){
+        const u=`https://api.stackexchange.com/2.3/search/excerpts?order=desc&sort=relevance&q=${encodeURIComponent(seed)}&site=parenting`
+        const j=await safeFetch(u);return j?(j.items||[]).map(it=>it.title):[]
+      }
+
+      scoreKeyword(kw,inp){
+        let score=0
+        if(inp.title.toLowerCase().includes(kw))score+=10
+        if(inp.description.toLowerCase().includes(kw))score+=5
+        if(inp.show.toLowerCase().includes(kw))score+=6
+        if(kw.split(" ").length<=4)score+=4
+        if(kw.length>20)score-=2
+        return Math.max(0,score)
+      }
+
+      async generate(inp){
+        const parts=this.extractTopics(inp)
+        const seed=inp.topic_override||parts.topic_phrases[0]||inp.title
+        const feeds=await this.fetchFeeds(seed)
+        const all=unique([...parts.core_terms,...parts.topic_phrases,...feeds.datamuse,...feeds.wiki,...feeds.ddg,...feeds.books,...feeds.stack])
+        this.rows=all.map(k=>({keyword:k,score:this.scoreKeyword(k,inp)}))
+        return this.rows.sort((a,b)=>b.score-a.score)
+      }
+    }
+
+    /* ---------- Ad Copy Engine ---------- */
+    class AdCopyEngine {
+      buildHeadlines(topic,brand){
+        return unique([
+          `${topic} 101`,`Learn ${topic} Today`,`${topic} Explained`,
+          `${brand} ${topic}`,`Free ${topic} Lessons`
+        ]).slice(0,10)
+      }
+      buildDescriptions(topic,brand){
+        return [
+          `Learn ${topic} with ${brand}. Trusted free videos.`,
+          `${brand} makes ${topic} simple and clear.`,
+          `Watch ${topic} lessons anytime.`
+        ]
+      }
+    }
+
+    /* ---------- UI Controller ---------- */
+    class UIController {
+      constructor(){
+        this.keywordEngine=new KeywordEngine()
+        this.adEngine=new AdCopyEngine()
+        this.bindUI()
+      }
+      bindUI(){
+        document.getElementById("generate").onclick=()=>this.generate()
+        document.getElementById("reset").onclick=()=>this.reset()
+        document.getElementById("openCopy").onclick=()=>this.openCopy()
+        document.getElementById("closeSidebar").onclick=()=>document.getElementById("adSidebar").classList.remove("open")
+      }
+      async generate(){
+        const inp={title:val("title"),description:val("description"),show:val("show"),brand:val("brand"),topic_override:val("topic_override")}
+        const rows=await this.keywordEngine.generate(inp)
+        const table=`<table><tr><th>Keyword</th><th>Score</th><th>Priority</th></tr>`+
+          rows.slice(0,40).map(r=>{
+            const p=r.score>15?"High":r.score>8?"Medium":"Low"
+            return `<tr><td>${r.keyword}</td><td>${r.score}</td><td><span class="pill ${p.toLowerCase()}">${p}</span></td></tr>`
+          }).join("")+`</table>`
+        document.getElementById("outputArea").innerHTML=table
+        document.getElementById("openCopy").disabled=false
+      }
+      reset(){
+        this.keywordEngine.reset()
+        ["title","description","show","brand","topic_override"].forEach(id=>setval(id,""))
+        document.getElementById("outputArea").innerHTML="Reset."
+        document.getElementById("openCopy").disabled=true
+      }
+      openCopy(){
+        const topic=val("topic_override")||val("title")||"Topic"
+        const brand=val("brand")||"PragerU"
+        const H=this.adEngine.buildHeadlines(topic,brand)
+        const D=this.adEngine.buildDescriptions(topic,brand)
+        document.getElementById("pane-heads").innerHTML=H.map(h=>`<div>${h}</div>`).join("")
+        document.getElementById("pane-descs").innerHTML=D.map(d=>`<div>${d}</div>`).join("")
+        document.getElementById("adSidebar").classList.add("open")
+      }
+    }
+
+    /* ---------- Helpers ---------- */
+    function val(id){return document.getElementById(id).value}
+    function setval(id,v){document.getElementById(id).value=v}
+
+    /* ---------- Init ---------- */
+    new UIController()
+  </script>
+</body>
+</html>
